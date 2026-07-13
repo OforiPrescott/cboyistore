@@ -1,0 +1,20 @@
+[
+  { "id": "iphone-16-pro-max", "name": "iPhone 16 Pro Max", "baseValue": 9500 },
+  { "id": "iphone-16-pro", "name": "iPhone 16 Pro", "baseValue": 7800 },
+  { "id": "iphone-16", "name": "iPhone 16", "baseValue": 5600 },
+  { "id": "iphone-15-pro", "name": "iPhone 15 Pro", "baseValue": 6200 },
+  { "id": "iphone-15", "name": "iPhone 15", "baseValue": 4600 },
+  { "id": "iphone-14-pro", "name": "iPhone 14 Pro", "baseValue": 4400 },
+  { "id": "iphone-14", "name": "iPhone 14", "baseValue": 3400 },
+  { "id": "iphone-13", "name": "iPhone 13", "baseValue": 2600 },
+  { "id": "iphone-12", "name": "iPhone 12", "baseValue": 1900 },
+  { "id": "iphone-11", "name": "iPhone 11", "baseValue": 1300 },
+  { "id": "samsung-s24-ultra", "name": "Samsung Galaxy S24 Ultra", "baseValue": 6200 },
+  { "id": "samsung-s23", "name": "Samsung Galaxy S23", "baseValue": 3800 },
+  { "id": "samsung-a55", "name": "Samsung Galaxy A55", "baseValue": 2100 },
+  { "id": "macbook-air-m2", "name": "MacBook Air M2", "baseValue": 8200 },
+  { "id": "macbook-air-m1", "name": "MacBook Air M1", "baseValue": 5400 },
+  { "id": "macbook-pro-m1", "name": "MacBook Pro M1", "baseValue": 6600 },
+  { "id": "ipad-9-10", "name": "iPad (9th / 10th Gen)", "baseValue": 2100 },
+  { "id": "apple-watch-series-8-9", "name": "Apple Watch Series 8 / 9", "baseValue": 1600 }
+]
