@@ -10,6 +10,18 @@ const SORTS = [
   { id: "name-asc", label: "Name: A–Z" },
 ];
 
+// Featured ranking: newest iPhone generations first, then everything else in
+// its original catalogue order. Lets new models (17, 18, …) float to the top
+// automatically without manually reordering the data file.
+function featuredRank(p) {
+  if (p.category === "phones" && p.brand === "Apple") {
+    const m = p.id.match(/iph-(\d+)/);
+    if (m) return parseInt(m[1], 10);
+    if (/se/i.test(p.id)) return 0;
+  }
+  return -1;
+}
+
 function SkeletonCard() {
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-ink/5">
@@ -62,6 +74,12 @@ export default function Shop() {
     if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
     else if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
     else if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
+    else {
+      // Featured: newest iPhone generations first, then original order.
+      const ranked = list.map((p, i) => ({ p, i, rank: featuredRank(p) }));
+      ranked.sort((a, b) => b.rank - a.rank || a.i - b.i);
+      list = ranked.map((r) => r.p);
+    }
     return list;
   }, [products, brand, sort]);
 
