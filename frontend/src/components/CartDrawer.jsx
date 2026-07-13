@@ -44,6 +44,13 @@ export default function CartDrawer() {
                   />
                   <div className="flex flex-1 flex-col">
                     <p className="text-sm font-600 text-ink leading-snug">{item.name}</p>
+                    {(item.storage || item.color) && (
+                      <p className="text-xs text-ink/50">
+                        {item.storage ? `${item.storage}` : ""}
+                        {item.storage && item.color ? " · " : ""}
+                        {item.color ? item.color.name : ""}
+                      </p>
+                    )}
                     <p className="text-xs text-ink/50">{formatGHS(item.price)}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <button

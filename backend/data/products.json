@@ -4,7 +4,7 @@
     "name": "iPhone 16 Pro Max",
     "category": "phones",
     "brand": "Apple",
-    "spec": "256GB \u00b7 8GB RAM \u00b7 Titanium",
+    "spec": "256GB · 8GB RAM · Titanium",
     "condition": "Brand New",
     "price": 14500,
     "image": "/images/generated/iph-16-pro-max.svg",
@@ -19,14 +19,48 @@
       "Body": "Titanium, IP68 water resistant"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 14500
+        },
+        {
+          "value": "512GB",
+          "price": 15400
+        },
+        {
+          "value": "1TB",
+          "price": 16400
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-16-pro",
     "name": "iPhone 16 Pro",
     "category": "phones",
     "brand": "Apple",
-    "spec": "256GB \u00b7 8GB RAM \u00b7 Titanium",
+    "spec": "256GB · 8GB RAM · Titanium",
     "condition": "Brand New",
     "price": 11800,
     "image": "/images/generated/iph-16-pro.svg",
@@ -39,14 +73,48 @@
       "Body": "Titanium, IP68 water resistant"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 11800
+        },
+        {
+          "value": "512GB",
+          "price": 12700
+        },
+        {
+          "value": "1TB",
+          "price": 13700
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-16-plus",
     "name": "iPhone 16 Plus",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 6.7-inch",
+    "spec": "128GB · 6.7-inch",
     "condition": "Brand New",
     "price": 9800,
     "image": "/images/generated/iph-16-plus.svg",
@@ -58,14 +126,48 @@
       "Storage": "128GB / 256GB / 512GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 9800
+        },
+        {
+          "value": "256GB",
+          "price": 10700
+        },
+        {
+          "value": "512GB",
+          "price": 11700
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-16",
     "name": "iPhone 16",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 6.1-inch",
+    "spec": "128GB · 6.1-inch",
     "condition": "Brand New",
     "price": 8500,
     "image": "/images/generated/iph-16.svg",
@@ -77,14 +179,48 @@
       "Storage": "128GB / 256GB / 512GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 8500
+        },
+        {
+          "value": "256GB",
+          "price": 9400
+        },
+        {
+          "value": "512GB",
+          "price": 10400
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-15-pro-max",
     "name": "iPhone 15 Pro Max",
     "category": "phones",
     "brand": "Apple",
-    "spec": "256GB \u00b7 Titanium",
+    "spec": "256GB · Titanium",
     "condition": "Brand New",
     "price": 12900,
     "image": "/images/generated/iph-15-pro-max.svg",
@@ -96,14 +232,48 @@
       "Storage": "256GB / 512GB / 1TB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 12900
+        },
+        {
+          "value": "512GB",
+          "price": 13800
+        },
+        {
+          "value": "1TB",
+          "price": 14800
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-15-pro",
     "name": "iPhone 15 Pro",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 Titanium",
+    "spec": "128GB · Titanium",
     "condition": "Brand New",
     "price": 10200,
     "image": "/images/generated/iph-15-pro.svg",
@@ -115,14 +285,48 @@
       "Storage": "128GB / 256GB / 512GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 10200
+        },
+        {
+          "value": "512GB",
+          "price": 11100
+        },
+        {
+          "value": "1TB",
+          "price": 12100
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-15",
     "name": "iPhone 15",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 6800,
     "image": "/images/generated/iph-15.svg",
@@ -135,14 +339,48 @@
       "Storage": "128GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 6800
+        },
+        {
+          "value": "256GB",
+          "price": 7700
+        },
+        {
+          "value": "512GB",
+          "price": 8700
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-14-pro",
     "name": "iPhone 14 Pro",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 7600,
     "image": "/images/generated/iph-14-pro.svg",
@@ -154,14 +392,48 @@
       "Storage": "128GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 7600
+        },
+        {
+          "value": "512GB",
+          "price": 8500
+        },
+        {
+          "value": "1TB",
+          "price": 9500
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-14",
     "name": "iPhone 14",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 5200,
     "image": "/images/generated/iph-14.svg",
@@ -174,14 +446,48 @@
       "Storage": "128GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 5200
+        },
+        {
+          "value": "256GB",
+          "price": 6100
+        },
+        {
+          "value": "512GB",
+          "price": 7100
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-13",
     "name": "iPhone 13",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 4600,
     "image": "/images/generated/iph-13.svg",
@@ -193,14 +499,48 @@
       "Storage": "128GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 4600
+        },
+        {
+          "value": "256GB",
+          "price": 5500
+        },
+        {
+          "value": "512GB",
+          "price": 6500
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-13-mini",
     "name": "iPhone 13 mini",
     "category": "phones",
     "brand": "Apple",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 3900,
     "image": "/images/generated/iph-13-mini.svg",
@@ -212,14 +552,48 @@
       "Storage": "128GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 3900
+        },
+        {
+          "value": "256GB",
+          "price": 4800
+        },
+        {
+          "value": "512GB",
+          "price": 5800
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "iph-se-2022",
     "name": "iPhone SE (2022)",
     "category": "phones",
     "brand": "Apple",
-    "spec": "64GB \u00b7 Touch ID",
+    "spec": "64GB · Touch ID",
     "condition": "Brand New",
     "price": 2800,
     "image": "/images/generated/iph-se-2022.svg",
@@ -231,14 +605,48 @@
       "Storage": "64GB / 128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 2800
+        },
+        {
+          "value": "256GB",
+          "price": 3700
+        },
+        {
+          "value": "512GB",
+          "price": 4700
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   },
   {
     "id": "sam-s24-ultra",
     "name": "Samsung Galaxy S24 Ultra",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "256GB \u00b7 12GB RAM",
+    "spec": "256GB · 12GB RAM",
     "condition": "Brand New",
     "price": 9600,
     "image": "/images/generated/sam-s24-ultra.svg",
@@ -251,14 +659,48 @@
       "Extras": "S Pen included"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 9600
+        },
+        {
+          "value": "512GB",
+          "price": 10500
+        },
+        {
+          "value": "1TB",
+          "price": 11500
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-s24-plus",
     "name": "Samsung Galaxy S24+",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "256GB \u00b7 12GB RAM",
+    "spec": "256GB · 12GB RAM",
     "condition": "Brand New",
     "price": 8200,
     "image": "/images/generated/sam-s24-plus.svg",
@@ -270,14 +712,48 @@
       "Storage": "256GB / 512GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 8200
+        },
+        {
+          "value": "256GB",
+          "price": 9100
+        },
+        {
+          "value": "512GB",
+          "price": 10100
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-s24",
     "name": "Samsung Galaxy S24",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "128GB \u00b7 8GB RAM",
+    "spec": "128GB · 8GB RAM",
     "condition": "Brand New",
     "price": 6900,
     "image": "/images/generated/sam-s24.svg",
@@ -289,14 +765,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 6900
+        },
+        {
+          "value": "256GB",
+          "price": 7800
+        },
+        {
+          "value": "512GB",
+          "price": 8800
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-s23-ultra",
     "name": "Samsung Galaxy S23 Ultra",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "256GB \u00b7 UK Used",
+    "spec": "256GB · UK Used",
     "condition": "UK Used",
     "price": 7400,
     "image": "/images/generated/sam-s23-ultra.svg",
@@ -309,14 +819,48 @@
       "Extras": "S Pen included"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 7400
+        },
+        {
+          "value": "512GB",
+          "price": 8300
+        },
+        {
+          "value": "1TB",
+          "price": 9300
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-z-fold6",
     "name": "Samsung Galaxy Z Fold6",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "512GB \u00b7 Foldable",
+    "spec": "512GB · Foldable",
     "condition": "Brand New",
     "price": 16500,
     "image": "/images/generated/sam-z-fold6.svg",
@@ -329,14 +873,48 @@
       "Storage": "256GB / 512GB / 1TB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 16500
+        },
+        {
+          "value": "256GB",
+          "price": 17400
+        },
+        {
+          "value": "512GB",
+          "price": 18400
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-z-flip6",
     "name": "Samsung Galaxy Z Flip6",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "256GB \u00b7 Foldable",
+    "spec": "256GB · Foldable",
     "condition": "Brand New",
     "price": 11200,
     "image": "/images/generated/sam-z-flip6.svg",
@@ -348,14 +926,48 @@
       "Storage": "256GB / 512GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 11200
+        },
+        {
+          "value": "256GB",
+          "price": 12100
+        },
+        {
+          "value": "512GB",
+          "price": 13100
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-a55",
     "name": "Samsung Galaxy A55",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "128GB \u00b7 8GB RAM",
+    "spec": "128GB · 8GB RAM",
     "condition": "Brand New",
     "price": 3600,
     "image": "/images/generated/sam-a55.svg",
@@ -367,14 +979,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 3600
+        },
+        {
+          "value": "256GB",
+          "price": 4500
+        },
+        {
+          "value": "512GB",
+          "price": 5500
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "sam-a35",
     "name": "Samsung Galaxy A35",
     "category": "phones",
     "brand": "Samsung",
-    "spec": "128GB \u00b7 6GB RAM",
+    "spec": "128GB · 6GB RAM",
     "condition": "Brand New",
     "price": 3000,
     "image": "/images/generated/sam-a35.svg",
@@ -386,14 +1032,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 3000
+        },
+        {
+          "value": "256GB",
+          "price": 3900
+        },
+        {
+          "value": "512GB",
+          "price": 4900
+        }
+      ],
+      "color": [
+        {
+          "name": "Phantom Black",
+          "hex": "#1b1b1f"
+        },
+        {
+          "name": "Cream",
+          "hex": "#ece6d8"
+        },
+        {
+          "name": "Green",
+          "hex": "#5a6b54"
+        },
+        {
+          "name": "Violet",
+          "hex": "#6b5b95"
+        }
+      ]
+    }
   },
   {
     "id": "pix-9-pro",
     "name": "Google Pixel 9 Pro",
     "category": "phones",
     "brand": "Google",
-    "spec": "256GB \u00b7 Tensor G4",
+    "spec": "256GB · Tensor G4",
     "condition": "Brand New",
     "price": 8600,
     "image": "/images/generated/pix-9-pro.svg",
@@ -407,14 +1087,48 @@
       "Extras": "7 years of OS updates"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 8600
+        },
+        {
+          "value": "256GB",
+          "price": 9500
+        },
+        {
+          "value": "512GB",
+          "price": 10500
+        }
+      ],
+      "color": [
+        {
+          "name": "Obsidian",
+          "hex": "#202124"
+        },
+        {
+          "name": "Porcelain",
+          "hex": "#e8e6df"
+        },
+        {
+          "name": "Bay",
+          "hex": "#4a7fb5"
+        },
+        {
+          "name": "Rose",
+          "hex": "#c98b8b"
+        }
+      ]
+    }
   },
   {
     "id": "pix-9",
     "name": "Google Pixel 9",
     "category": "phones",
     "brand": "Google",
-    "spec": "128GB \u00b7 Tensor G4",
+    "spec": "128GB · Tensor G4",
     "condition": "Brand New",
     "price": 6900,
     "image": "/images/generated/pix-9.svg",
@@ -426,14 +1140,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 6900
+        },
+        {
+          "value": "256GB",
+          "price": 7800
+        },
+        {
+          "value": "512GB",
+          "price": 8800
+        }
+      ],
+      "color": [
+        {
+          "name": "Obsidian",
+          "hex": "#202124"
+        },
+        {
+          "name": "Porcelain",
+          "hex": "#e8e6df"
+        },
+        {
+          "name": "Bay",
+          "hex": "#4a7fb5"
+        },
+        {
+          "name": "Rose",
+          "hex": "#c98b8b"
+        }
+      ]
+    }
   },
   {
     "id": "pix-8a",
     "name": "Google Pixel 8a",
     "category": "phones",
     "brand": "Google",
-    "spec": "128GB \u00b7 Tensor G3",
+    "spec": "128GB · Tensor G3",
     "condition": "Brand New",
     "price": 4800,
     "image": "/images/generated/pix-8a.svg",
@@ -445,14 +1193,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 4800
+        },
+        {
+          "value": "256GB",
+          "price": 5700
+        },
+        {
+          "value": "512GB",
+          "price": 6700
+        }
+      ],
+      "color": [
+        {
+          "name": "Obsidian",
+          "hex": "#202124"
+        },
+        {
+          "name": "Porcelain",
+          "hex": "#e8e6df"
+        },
+        {
+          "name": "Bay",
+          "hex": "#4a7fb5"
+        },
+        {
+          "name": "Rose",
+          "hex": "#c98b8b"
+        }
+      ]
+    }
   },
   {
     "id": "pix-8",
     "name": "Google Pixel 8",
     "category": "phones",
     "brand": "Google",
-    "spec": "128GB \u00b7 UK Used",
+    "spec": "128GB · UK Used",
     "condition": "UK Used",
     "price": 5200,
     "image": "/images/generated/pix-8.svg",
@@ -464,14 +1246,48 @@
       "Storage": "128GB / 256GB"
     },
     "rating": 4.5,
-    "stock": 12
+    "stock": 12,
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 5200
+        },
+        {
+          "value": "256GB",
+          "price": 6100
+        },
+        {
+          "value": "512GB",
+          "price": 7100
+        }
+      ],
+      "color": [
+        {
+          "name": "Obsidian",
+          "hex": "#202124"
+        },
+        {
+          "name": "Porcelain",
+          "hex": "#e8e6df"
+        },
+        {
+          "name": "Bay",
+          "hex": "#4a7fb5"
+        },
+        {
+          "name": "Rose",
+          "hex": "#c98b8b"
+        }
+      ]
+    }
   },
   {
     "id": "mbp-16-m3pro",
     "name": "MacBook Pro 16\" M3 Pro",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "12-core \u00b7 512GB SSD \u00b7 18GB RAM",
+    "spec": "12-core · 512GB SSD · 18GB RAM",
     "condition": "Brand New",
     "price": 26500,
     "image": "/images/generated/mbp-16-m3pro.svg",
@@ -492,7 +1308,7 @@
     "name": "MacBook Pro 14\" M3",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "8-core \u00b7 512GB SSD \u00b7 16GB RAM",
+    "spec": "8-core · 512GB SSD · 16GB RAM",
     "condition": "Brand New",
     "price": 18900,
     "image": "/images/generated/mbp-14-m3.svg",
@@ -513,7 +1329,7 @@
     "name": "MacBook Air 15\" M2",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "8-core \u00b7 256GB SSD \u00b7 8GB RAM",
+    "spec": "8-core · 256GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 14200,
     "image": "/images/generated/mba-15-m2.svg",
@@ -533,7 +1349,7 @@
     "name": "MacBook Air 13\" M2",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "256GB SSD \u00b7 8GB RAM",
+    "spec": "256GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 12500,
     "image": "/images/generated/mba-13-m2.svg",
@@ -553,7 +1369,7 @@
     "name": "MacBook Air 13\" M3",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "256GB SSD \u00b7 8GB RAM",
+    "spec": "256GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 13600,
     "image": "/images/generated/mba-13-m3.svg",
@@ -574,7 +1390,7 @@
     "name": "MacBook Air 13\" M1",
     "category": "laptops",
     "brand": "Apple",
-    "spec": "256GB SSD \u00b7 UK Used",
+    "spec": "256GB SSD · UK Used",
     "condition": "UK Used",
     "price": 7900,
     "image": "/images/generated/mba-13-m1.svg",
@@ -594,7 +1410,7 @@
     "name": "HP ProBook 450 G9",
     "category": "laptops",
     "brand": "HP",
-    "spec": "Core i5 \u00b7 512GB SSD \u00b7 8GB RAM",
+    "spec": "Core i5 · 512GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 6200,
     "image": "/images/generated/hp-probook.svg",
@@ -614,7 +1430,7 @@
     "name": "HP Pavilion 15",
     "category": "laptops",
     "brand": "HP",
-    "spec": "Core i7 \u00b7 512GB SSD \u00b7 16GB RAM",
+    "spec": "Core i7 · 512GB SSD · 16GB RAM",
     "condition": "Brand New",
     "price": 7800,
     "image": "/images/generated/hp-pavilion-15.svg",
@@ -634,7 +1450,7 @@
     "name": "Dell XPS 13",
     "category": "laptops",
     "brand": "Dell",
-    "spec": "Core i7 \u00b7 512GB SSD \u00b7 16GB RAM",
+    "spec": "Core i7 · 512GB SSD · 16GB RAM",
     "condition": "Brand New",
     "price": 11500,
     "image": "/images/generated/dell-xps-13.svg",
@@ -655,7 +1471,7 @@
     "name": "Dell Latitude 5420",
     "category": "laptops",
     "brand": "Dell",
-    "spec": "Core i7 \u00b7 256GB SSD \u00b7 UK Used",
+    "spec": "Core i7 · 256GB SSD · UK Used",
     "condition": "UK Used",
     "price": 4900,
     "image": "/images/generated/dell-latitude.svg",
@@ -675,7 +1491,7 @@
     "name": "Lenovo ThinkPad E14",
     "category": "laptops",
     "brand": "Lenovo",
-    "spec": "Core i5 \u00b7 256GB SSD \u00b7 8GB RAM",
+    "spec": "Core i5 · 256GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 5600,
     "image": "/images/generated/lenovo-thinkpad-e14.svg",
@@ -695,7 +1511,7 @@
     "name": "Asus Vivobook 15",
     "category": "laptops",
     "brand": "Asus",
-    "spec": "Ryzen 5 \u00b7 512GB SSD \u00b7 8GB RAM",
+    "spec": "Ryzen 5 · 512GB SSD · 8GB RAM",
     "condition": "Brand New",
     "price": 5900,
     "image": "/images/generated/asus-vivobook-15.svg",
@@ -715,7 +1531,7 @@
     "name": "iPad (10th Gen)",
     "category": "tablets",
     "brand": "Apple",
-    "spec": "64GB \u00b7 Wi-Fi",
+    "spec": "64GB · Wi-Fi",
     "condition": "Brand New",
     "price": 4200,
     "image": "/images/generated/ipad-10.svg",
@@ -734,7 +1550,7 @@
     "name": "iPad Air 11\" (M2)",
     "category": "tablets",
     "brand": "Apple",
-    "spec": "128GB \u00b7 Wi-Fi",
+    "spec": "128GB · Wi-Fi",
     "condition": "Brand New",
     "price": 7900,
     "image": "/images/generated/ipad-air-m2.svg",
@@ -754,7 +1570,7 @@
     "name": "iPad Pro 11\" (M4)",
     "category": "tablets",
     "brand": "Apple",
-    "spec": "256GB \u00b7 Wi-Fi",
+    "spec": "256GB · Wi-Fi",
     "condition": "Brand New",
     "price": 13800,
     "image": "/images/generated/ipad-pro-11-m4.svg",
@@ -774,7 +1590,7 @@
     "name": "Samsung Galaxy Tab S9",
     "category": "tablets",
     "brand": "Samsung",
-    "spec": "128GB \u00b7 S Pen included",
+    "spec": "128GB · S Pen included",
     "condition": "Brand New",
     "price": 6800,
     "image": "/images/generated/sam-tab-s9.svg",
@@ -793,7 +1609,7 @@
     "name": "Samsung Galaxy Tab A9",
     "category": "tablets",
     "brand": "Samsung",
-    "spec": "64GB \u00b7 Wi-Fi",
+    "spec": "64GB · Wi-Fi",
     "condition": "Brand New",
     "price": 2200,
     "image": "/images/generated/sam-tab-a9.svg",
@@ -812,7 +1628,7 @@
     "name": "Apple Watch Ultra 2",
     "category": "smartwatches",
     "brand": "Apple",
-    "spec": "49mm \u00b7 Titanium \u00b7 GPS+Cellular",
+    "spec": "49mm · Titanium · GPS+Cellular",
     "condition": "Brand New",
     "price": 7900,
     "image": "/images/generated/apple-watch-ultra2.svg",
@@ -832,7 +1648,7 @@
     "name": "Apple Watch Series 10",
     "category": "smartwatches",
     "brand": "Apple",
-    "spec": "46mm \u00b7 GPS",
+    "spec": "46mm · GPS",
     "condition": "Brand New",
     "price": 3900,
     "image": "/images/generated/apple-watch-s10.svg",
@@ -852,7 +1668,7 @@
     "name": "Apple Watch SE (2nd Gen)",
     "category": "smartwatches",
     "brand": "Apple",
-    "spec": "44mm \u00b7 GPS",
+    "spec": "44mm · GPS",
     "condition": "Brand New",
     "price": 2400,
     "image": "/images/generated/apple-watch-se.svg",
@@ -871,7 +1687,7 @@
     "name": "Samsung Galaxy Watch 7",
     "category": "smartwatches",
     "brand": "Samsung",
-    "spec": "44mm \u00b7 AMOLED",
+    "spec": "44mm · AMOLED",
     "condition": "Brand New",
     "price": 2800,
     "image": "/images/generated/sam-watch-7.svg",
@@ -891,7 +1707,7 @@
     "name": "Samsung Galaxy Watch 6",
     "category": "smartwatches",
     "brand": "Samsung",
-    "spec": "44mm \u00b7 AMOLED",
+    "spec": "44mm · AMOLED",
     "condition": "Brand New",
     "price": 2200,
     "image": "/images/generated/sam-watch-6.svg",
@@ -910,7 +1726,7 @@
     "name": "Apple AirPods Pro 2",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "USB-C \u00b7 Active Noise Cancelling",
+    "spec": "USB-C · Active Noise Cancelling",
     "condition": "Brand New",
     "price": 1850,
     "image": "/images/generated/airpods-pro-2.svg",
@@ -929,7 +1745,7 @@
     "name": "Apple AirPods 4",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "USB-C \u00b7 ANC",
+    "spec": "USB-C · ANC",
     "condition": "Brand New",
     "price": 1400,
     "image": "/images/generated/airpods-4.svg",
@@ -948,7 +1764,7 @@
     "name": "Apple AirPods Max",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "Over-ear \u00b7 ANC",
+    "spec": "Over-ear · ANC",
     "condition": "Brand New",
     "price": 4600,
     "image": "/images/generated/airpods-max.svg",
@@ -966,7 +1782,7 @@
     "name": "Samsung Galaxy Buds3 Pro",
     "category": "accessories",
     "brand": "Samsung",
-    "spec": "ANC \u00b7 Hi-Fi audio",
+    "spec": "ANC · Hi-Fi audio",
     "condition": "Brand New",
     "price": 1750,
     "image": "/images/generated/sam-buds3-pro.svg",
@@ -983,7 +1799,7 @@
     "name": "JBL Tune 130NC",
     "category": "accessories",
     "brand": "JBL",
-    "spec": "Wireless \u00b7 ANC",
+    "spec": "Wireless · ANC",
     "condition": "Brand New",
     "price": 650,
     "image": "/images/generated/jbl-tune-earbuds.svg",
@@ -1000,7 +1816,7 @@
     "name": "JBL Flip 6 Bluetooth Speaker",
     "category": "accessories",
     "brand": "JBL",
-    "spec": "Portable \u00b7 Waterproof",
+    "spec": "Portable · Waterproof",
     "condition": "Brand New",
     "price": 1100,
     "image": "/images/generated/jbl-flip-speaker.svg",
@@ -1017,7 +1833,7 @@
     "name": "Apple 20W USB-C Fast Charger",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "Original \u00b7 Fast Charging",
+    "spec": "Original · Fast Charging",
     "condition": "Brand New",
     "price": 150,
     "image": "/images/generated/apple-20w-charger.svg",
@@ -1029,7 +1845,7 @@
     "name": "Apple 30W USB-C Fast Charger",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "Original \u00b7 Fast Charging",
+    "spec": "Original · Fast Charging",
     "condition": "Brand New",
     "price": 210,
     "image": "/images/generated/apple-30w-charger.svg",
@@ -1041,7 +1857,7 @@
     "name": "USB-C to Lightning Cable (1m)",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "Original \u00b7 1 Meter",
+    "spec": "Original · 1 Meter",
     "condition": "Brand New",
     "price": 90,
     "image": "/images/generated/usb-c-cable.svg",
@@ -1053,7 +1869,7 @@
     "name": "USB-C to USB-C Cable (1m)",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "Fast Charge \u00b7 Braided",
+    "spec": "Fast Charge · Braided",
     "condition": "Brand New",
     "price": 70,
     "image": "/images/generated/usb-c-c-cable.svg",
@@ -1065,7 +1881,7 @@
     "name": "Anker 20,000mAh Power Bank",
     "category": "accessories",
     "brand": "Anker",
-    "spec": "Fast Charge \u00b7 Dual USB",
+    "spec": "Fast Charge · Dual USB",
     "condition": "Brand New",
     "price": 320,
     "image": "/images/generated/anker-powerbank-20k.svg",
@@ -1077,7 +1893,7 @@
     "name": "Anker 10,000mAh Power Bank",
     "category": "accessories",
     "brand": "Anker",
-    "spec": "Fast Charge \u00b7 Slim",
+    "spec": "Fast Charge · Slim",
     "condition": "Brand New",
     "price": 190,
     "image": "/images/generated/anker-powerbank-10k.svg",
@@ -1089,7 +1905,7 @@
     "name": "Apple MagSafe Charger",
     "category": "accessories",
     "brand": "Apple",
-    "spec": "15W \u00b7 Wireless",
+    "spec": "15W · Wireless",
     "condition": "Brand New",
     "price": 380,
     "image": "/images/generated/magsafe-charger.svg",
@@ -1101,7 +1917,7 @@
     "name": "Silicone Case with MagSafe",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "Shockproof \u00b7 All iPhone Models",
+    "spec": "Shockproof · All iPhone Models",
     "condition": "Brand New",
     "price": 120,
     "image": "/images/generated/iphone-case.svg",
@@ -1113,7 +1929,7 @@
     "name": "Clear Protective Case",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "Shockproof \u00b7 Slim fit",
+    "spec": "Shockproof · Slim fit",
     "condition": "Brand New",
     "price": 90,
     "image": "/images/generated/clear-case.svg",
@@ -1125,7 +1941,7 @@
     "name": "Tempered Glass Screen Protector",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "9H Hardness \u00b7 Anti-fingerprint",
+    "spec": "9H Hardness · Anti-fingerprint",
     "condition": "Brand New",
     "price": 40,
     "image": "/images/generated/screen-protector.svg",
@@ -1137,7 +1953,7 @@
     "name": "Tempered Glass Screen Protector (Samsung)",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "9H Hardness \u00b7 Anti-fingerprint",
+    "spec": "9H Hardness · Anti-fingerprint",
     "condition": "Brand New",
     "price": 40,
     "image": "/images/generated/screen-protector-sam.svg",
@@ -1149,7 +1965,7 @@
     "name": "Adjustable Phone & Tablet Stand",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "Foldable \u00b7 Desk Stand",
+    "spec": "Foldable · Desk Stand",
     "condition": "Brand New",
     "price": 85,
     "image": "/images/generated/phone-stand.svg",
@@ -1161,7 +1977,7 @@
     "name": "SanDisk 128GB microSD Card",
     "category": "accessories",
     "brand": "Generic",
-    "spec": "A2 \u00b7 Up to 190MB/s",
+    "spec": "A2 · Up to 190MB/s",
     "condition": "Brand New",
     "price": 210,
     "image": "/images/generated/memory-card-128.svg",
@@ -1173,7 +1989,7 @@
     "name": "PlayStation 5 Slim",
     "category": "gaming",
     "brand": "Sony",
-    "spec": "1TB \u00b7 Disc Edition",
+    "spec": "1TB · Disc Edition",
     "condition": "Brand New",
     "price": 6500,
     "image": "/images/generated/ps5-slim.svg",
@@ -1191,7 +2007,7 @@
     "name": "PlayStation 5 Digital Edition",
     "category": "gaming",
     "brand": "Sony",
-    "spec": "1TB \u00b7 Digital Edition",
+    "spec": "1TB · Digital Edition",
     "condition": "Brand New",
     "price": 5900,
     "image": "/images/generated/ps5-digital.svg",
@@ -1208,7 +2024,7 @@
     "name": "DualSense Wireless Controller",
     "category": "gaming",
     "brand": "Sony",
-    "spec": "PS5 \u00b7 Bluetooth",
+    "spec": "PS5 · Bluetooth",
     "condition": "Brand New",
     "price": 650,
     "image": "/images/generated/ps5-controller.svg",
@@ -1220,7 +2036,7 @@
     "name": "Xbox Series X",
     "category": "gaming",
     "brand": "Microsoft",
-    "spec": "1TB \u00b7 4K Gaming",
+    "spec": "1TB · 4K Gaming",
     "condition": "Brand New",
     "price": 6800,
     "image": "/images/generated/xbox-series-x.svg",
@@ -1237,7 +2053,7 @@
     "name": "Xbox Series S",
     "category": "gaming",
     "brand": "Microsoft",
-    "spec": "512GB \u00b7 All-digital",
+    "spec": "512GB · All-digital",
     "condition": "Brand New",
     "price": 4200,
     "image": "/images/generated/xbox-series-s.svg",
@@ -1254,7 +2070,7 @@
     "name": "Xbox Wireless Controller",
     "category": "gaming",
     "brand": "Microsoft",
-    "spec": "Bluetooth \u00b7 Xbox/PC",
+    "spec": "Bluetooth · Xbox/PC",
     "condition": "Brand New",
     "price": 600,
     "image": "/images/generated/xbox-controller.svg",
@@ -1266,7 +2082,7 @@
     "name": "Nintendo Switch OLED",
     "category": "gaming",
     "brand": "Nintendo",
-    "spec": "64GB \u00b7 7-inch OLED",
+    "spec": "64GB · 7-inch OLED",
     "condition": "Brand New",
     "price": 4600,
     "image": "/images/generated/switch-oled.svg",
@@ -1284,7 +2100,7 @@
     "name": "Wireless Gaming Headset",
     "category": "gaming",
     "brand": "Generic",
-    "spec": "7.1 Surround \u00b7 Noise-cancel mic",
+    "spec": "7.1 Surround · Noise-cancel mic",
     "condition": "Brand New",
     "price": 480,
     "image": "/images/generated/gaming-headset.svg",
@@ -1296,7 +2112,7 @@
     "name": "Nasco Double Door Fridge 220L",
     "category": "appliances",
     "brand": "Nasco",
-    "spec": "220L \u00b7 Frost Free",
+    "spec": "220L · Frost Free",
     "condition": "Brand New",
     "price": 4500,
     "image": "/images/generated/fridge-double-door.svg",
@@ -1314,7 +2130,7 @@
     "name": "Midea Single Door Fridge 120L",
     "category": "appliances",
     "brand": "Midea",
-    "spec": "120L \u00b7 Direct Cool",
+    "spec": "120L · Direct Cool",
     "condition": "Brand New",
     "price": 2200,
     "image": "/images/generated/fridge-single-door.svg",
@@ -1332,7 +2148,7 @@
     "name": "Bruhm Chest Freezer 200L",
     "category": "appliances",
     "brand": "Bruhm",
-    "spec": "200L \u00b7 Energy Saving",
+    "spec": "200L · Energy Saving",
     "condition": "Brand New",
     "price": 3600,
     "image": "/images/generated/chest-freezer.svg",
@@ -1350,7 +2166,7 @@
     "name": "Nasco Chest Freezer 300L",
     "category": "appliances",
     "brand": "Nasco",
-    "spec": "300L \u00b7 Large Capacity",
+    "spec": "300L · Large Capacity",
     "condition": "Brand New",
     "price": 5200,
     "image": "/images/generated/chest-freezer-300.svg",
@@ -1369,7 +2185,7 @@
     "name": "LG 43\" Smart TV",
     "category": "appliances",
     "brand": "LG",
-    "spec": "43-inch \u00b7 Full HD Smart",
+    "spec": "43-inch · Full HD Smart",
     "condition": "Brand New",
     "price": 3200,
     "image": "/images/generated/lg-tv-43.svg",
@@ -1387,7 +2203,7 @@
     "name": "Samsung 50\" QLED TV",
     "category": "appliances",
     "brand": "Samsung",
-    "spec": "50-inch \u00b7 4K QLED",
+    "spec": "50-inch · 4K QLED",
     "condition": "Brand New",
     "price": 6800,
     "image": "/images/generated/sam-tv-50-qled.svg",
@@ -1406,7 +2222,7 @@
     "name": "Midea Microwave Oven 20L",
     "category": "appliances",
     "brand": "Midea",
-    "spec": "20L \u00b7 700W",
+    "spec": "20L · 700W",
     "condition": "Brand New",
     "price": 750,
     "image": "/images/generated/microwave-midea.svg",
@@ -1423,7 +2239,7 @@
     "name": "Bruhm Split Air Conditioner 1.5HP",
     "category": "appliances",
     "brand": "Bruhm",
-    "spec": "1.5HP \u00b7 Split Unit",
+    "spec": "1.5HP · Split Unit",
     "condition": "Brand New",
     "price": 3800,
     "image": "/images/generated/ac-bruhm-1p5hp.svg",
@@ -1440,7 +2256,7 @@
     "name": "Midea Washing Machine 7kg",
     "category": "appliances",
     "brand": "Midea",
-    "spec": "7kg \u00b7 Top Load",
+    "spec": "7kg · Top Load",
     "condition": "Brand New",
     "price": 4200,
     "image": "/images/generated/washer-midea-7kg.svg",
@@ -1457,11 +2273,231 @@
     "name": "Nasco Standing Fan 18\"",
     "category": "appliances",
     "brand": "Nasco",
-    "spec": "18-inch \u00b7 3-speed",
+    "spec": "18-inch · 3-speed",
     "condition": "Brand New",
     "price": 420,
     "image": "/images/generated/standing-fan.svg",
     "rating": 4.5,
     "stock": 12
+  },
+  {
+    "id": "iph-17",
+    "name": "iPhone 17",
+    "category": "phones",
+    "brand": "Apple",
+    "spec": "128GB · 6.3-inch",
+    "condition": "Brand New",
+    "price": 9500,
+    "image": "/images/generated/iph-16.svg",
+    "badge": "New Arrival",
+    "stock": 12,
+    "rating": 4.7,
+    "specs": {
+      "Display": "6.3\" Super Retina XDR OLED, 120Hz ProMotion",
+      "Chip": "A19",
+      "Camera": "48MP Main + 12MP Ultra Wide",
+      "Battery": "Up to 24 hrs video playback",
+      "Storage": "128GB / 256GB / 512GB",
+      "Body": "Aluminum, IP68 water resistant"
+    },
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 9500
+        },
+        {
+          "value": "256GB",
+          "price": 10400
+        },
+        {
+          "value": "512GB",
+          "price": 11400
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
+  },
+  {
+    "id": "iph-17-air",
+    "name": "iPhone 17 Air",
+    "category": "phones",
+    "brand": "Apple",
+    "spec": "128GB · 6.5-inch · Ultra-thin",
+    "condition": "Brand New",
+    "price": 10200,
+    "image": "/images/generated/iph-16.svg",
+    "badge": "New Arrival",
+    "stock": 12,
+    "rating": 4.7,
+    "specs": {
+      "Display": "6.5\" Super Retina XDR OLED",
+      "Chip": "A19 Pro",
+      "Camera": "48MP Fusion single camera",
+      "Battery": "Up to 22 hrs video playback",
+      "Storage": "128GB / 256GB / 512GB",
+      "Body": "Titanium, ultra-thin 5.5mm"
+    },
+    "variants": {
+      "storage": [
+        {
+          "value": "128GB",
+          "price": 10200
+        },
+        {
+          "value": "256GB",
+          "price": 11100
+        },
+        {
+          "value": "512GB",
+          "price": 12100
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
+  },
+  {
+    "id": "iph-17-pro",
+    "name": "iPhone 17 Pro",
+    "category": "phones",
+    "brand": "Apple",
+    "spec": "256GB · 6.3-inch",
+    "condition": "Brand New",
+    "price": 12800,
+    "image": "/images/generated/iph-16-pro.svg",
+    "badge": "New Arrival",
+    "stock": 12,
+    "rating": 4.8,
+    "specs": {
+      "Display": "6.3\" Super Retina XDR, 120Hz ProMotion",
+      "Chip": "A19 Pro",
+      "Camera": "48MP Main + 48MP Ultra Wide + 48MP Telephoto (4x)",
+      "Battery": "Up to 29 hrs video playback",
+      "Storage": "256GB / 512GB / 1TB",
+      "Body": "Aluminum unibody, IP68"
+    },
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 12800
+        },
+        {
+          "value": "512GB",
+          "price": 13700
+        },
+        {
+          "value": "1TB",
+          "price": 14700
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
+  },
+  {
+    "id": "iph-17-pro-max",
+    "name": "iPhone 17 Pro Max",
+    "category": "phones",
+    "brand": "Apple",
+    "spec": "256GB · 6.9-inch",
+    "condition": "Brand New",
+    "price": 15200,
+    "image": "/images/generated/iph-16-pro-max.svg",
+    "badge": "New Arrival",
+    "stock": 12,
+    "rating": 4.8,
+    "specs": {
+      "Display": "6.9\" Super Retina XDR, 120Hz ProMotion",
+      "Chip": "A19 Pro",
+      "Camera": "48MP Main + 48MP Ultra Wide + 48MP Telephoto (5x)",
+      "Battery": "Up to 35 hrs video playback",
+      "Storage": "256GB / 512GB / 1TB",
+      "Body": "Aluminum unibody, IP68"
+    },
+    "variants": {
+      "storage": [
+        {
+          "value": "256GB",
+          "price": 15200
+        },
+        {
+          "value": "512GB",
+          "price": 16100
+        },
+        {
+          "value": "1TB",
+          "price": 17100
+        }
+      ],
+      "color": [
+        {
+          "name": "Black Titanium",
+          "hex": "#1c1c1e"
+        },
+        {
+          "name": "Natural Titanium",
+          "hex": "#b0a89f"
+        },
+        {
+          "name": "White Titanium",
+          "hex": "#f1f0ec"
+        },
+        {
+          "name": "Blue Titanium",
+          "hex": "#4a5b73"
+        }
+      ]
+    }
   }
 ]

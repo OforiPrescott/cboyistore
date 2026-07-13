@@ -30,7 +30,14 @@ export default function Checkout({ onClose }) {
 
     try {
       const order = await createOrder({
-        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        items: items.map((i) => ({
+          id: i.productId || i.id,
+          name: i.name,
+          price: i.price,
+          qty: i.qty,
+          storage: i.storage || undefined,
+          color: i.color ? i.color.name : undefined,
+        })),
         customer: form,
       });
       setReference(order.reference);

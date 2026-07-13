@@ -23,6 +23,8 @@ const emptyForm = {
   badge: "",
   stock: "",
   specsText: "",
+  storageText: "",
+  colorsText: "",
 };
 
 function specsToText(specs) {
@@ -42,6 +44,48 @@ function textToSpecs(text) {
     specs[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
   }
   return Object.keys(specs).length ? specs : undefined;
+}
+
+// --- Variant helpers (storage options + colour swatches) ---
+
+function storageToText(variants) {
+  if (!variants?.storage?.length) return "";
+  return variants.storage.map((s) => `${s.value}: ${s.price}`).join("\n");
+}
+
+function colorsToText(variants) {
+  if (!variants?.color?.length) return "";
+  return variants.color.map((c) => `${c.name}: ${c.hex}`).join("\n");
+}
+
+function parseStorageText(text) {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return undefined;
+  const storage = [];
+  for (const line of lines) {
+    const idx = line.indexOf(":");
+    if (idx === -1) continue;
+    const value = line.slice(0, idx).trim();
+    const price = Number(line.slice(idx + 1).trim());
+    if (!value || Number.isNaN(price)) continue;
+    storage.push({ value, price });
+  }
+  return storage.length ? storage : undefined;
+}
+
+function parseColorsText(text) {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return undefined;
+  const color = [];
+  for (const line of lines) {
+    const idx = line.indexOf(":");
+    if (idx === -1) continue;
+    const name = line.slice(0, idx).trim();
+    const hex = line.slice(idx + 1).trim();
+    if (!name || !hex) continue;
+    color.push({ name, hex });
+  }
+  return color.length ? color : undefined;
 }
 
 export default function AdminDashboard() {
@@ -103,6 +147,8 @@ export default function AdminDashboard() {
       oldPrice: product.oldPrice || "",
       stock: product.stock ?? "",
       specsText: specsToText(product.specs),
+      storageText: storageToText(product.variants),
+      colorsText: colorsToText(product.variants),
     });
     setTab("products");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -116,13 +162,20 @@ export default function AdminDashboard() {
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage("");
-    const { specsText, ...rest } = form;
+    const { specsText, storageText, colorsText, ...rest } = form;
     const payload = {
       ...rest,
       price: Number(form.price),
       oldPrice: form.oldPrice ? Number(form.oldPrice) : undefined,
       stock: form.stock !== "" ? Number(form.stock) : undefined,
       specs: textToSpecs(specsText),
+      variants:
+        parseStorageText(storageText) || parseColorsText(colorsText)
+          ? {
+              storage: parseStorageText(storageText) || [],
+              color: parseColorsText(colorsText) || [],
+            }
+          : undefined,
     };
 
     try {
@@ -320,11 +373,57 @@ export default function AdminDashboard() {
               </label>
               <textarea
                 rows={5}
-                placeholder={"Display: 6.1\" OLED\nChip: A18\nBattery: Up to 22 hrs\nStorage: 128GB / 256GB"}
+                placeholder={'Display: 6.1" OLED\nChip: A18\nBattery: Up to 22 hrs\nStorage: 128GB / 256GB'}
                 value={form.specsText}
                 onChange={(e) => setForm({ ...form, specsText: e.target.value })}
                 className="focus-ring mt-1 w-full rounded-xl border border-ink/10 px-4 py-2.5 text-sm font-mono text-xs"
               />
+            </div>
+
+            <div className="rounded-2xl bg-cream/60 p-4 ring-1 ring-ink/5">
+              <p className="text-xs font-600 uppercase tracking-wide text-ink/50">
+                Variants (optional) — let customers pick storage &amp; colour
+              </p>
+              <div className="mt-3">
+                <label className="text-xs font-600 text-ink/50">
+                  Storage options — one per line "Size: Price (GHS)"
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder={"128GB: 8500\n256GB: 9200\n512GB: 10200"}
+                  value={form.storageText}
+                  onChange={(e) => setForm({ ...form, storageText: e.target.value })}
+                  className="focus-ring mt-1 w-full rounded-xl border border-ink/10 px-4 py-2.5 text-sm font-mono text-xs"
+                />
+              </div>
+              <div className="mt-3">
+                <label className="text-xs font-600 text-ink/50">
+                  Colours — one per line "Name: Hex"
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder={"Black Titanium: #1c1c1e\nNatural Titanium: #b0a89f"}
+                  value={form.colorsText}
+                  onChange={(e) => setForm({ ...form, colorsText: e.target.value })}
+                  className="focus-ring mt-1 w-full rounded-xl border border-ink/10 px-4 py-2.5 text-sm font-mono text-xs"
+                />
+              </div>
+              {form.colorsText.trim() && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {parseColorsText(form.colorsText)?.map((c) => (
+                    <span
+                      key={c.name}
+                      className="flex items-center gap-1.5 rounded-full border border-ink/10 bg-white px-2 py-1 text-xs text-ink/70"
+                    >
+                      <span
+                        className="h-4 w-4 rounded-full border border-ink/15"
+                        style={{ backgroundColor: c.hex }}
+                      />
+                      {c.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">

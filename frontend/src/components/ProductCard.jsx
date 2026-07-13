@@ -34,8 +34,16 @@ export default function ProductCard({ product }) {
   const [quickView, setQuickView] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const hasVariants = Array.isArray(product.variants?.storage) && product.variants.storage.length > 0;
+
   function handleAdd(e) {
     e.stopPropagation();
+    // If the product requires a storage/colour choice, open the quick view
+    // so the customer can pick before adding to the cart.
+    if (hasVariants) {
+      setQuickView(true);
+      return;
+    }
     addItem(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
@@ -133,8 +141,8 @@ export default function ProductCard({ product }) {
         <ProductModal
           product={product}
           onClose={() => setQuickView(false)}
-          onAdd={() => {
-            addItem(product);
+          onAdd={(variant) => {
+            addItem(product, variant);
           }}
         />
       )}

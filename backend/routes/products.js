@@ -78,6 +78,11 @@ router.post("/", requireAdmin, async (req, res, next) => {
       oldPrice: body.oldPrice ? Number(body.oldPrice) : undefined,
       image: body.image || "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
       badge: body.badge || undefined,
+      // Preserve richer catalogue fields configured from the admin dashboard.
+      specs: body.specs,
+      stock: body.stock !== undefined && body.stock !== "" ? Number(body.stock) : undefined,
+      rating: body.rating ? Number(body.rating) : undefined,
+      variants: body.variants || undefined,
     };
     products.push(product);
     await saveProducts(products);

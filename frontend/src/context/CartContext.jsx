@@ -18,15 +18,32 @@ export function CartProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  function addItem(product) {
+  function addItem(product, variant = {}) {
+    const storage = variant.storage || undefined;
+    const color = variant.color || undefined;
+    // A distinct cart line per product + chosen variant combination.
+    const lineId = `${product.id}::${storage || ""}::${color ? color.name : ""}`;
+    const price = typeof variant.price === "number" ? variant.price : product.price;
+
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
+      const existing = prev.find((i) => i.id === lineId);
       if (existing) {
-        return prev.map((i) =>
-          i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-        );
+        return prev.map((i) => (i.id === lineId ? { ...i, qty: i.qty + 1 } : i));
       }
-      return [...prev, { ...product, qty: 1 }];
+      return [
+        ...prev,
+        {
+          id: lineId,
+          productId: product.id,
+          name: product.name,
+          image: product.image,
+          brand: product.brand,
+          price,
+          storage,
+          color,
+          qty: 1,
+        },
+      ];
     });
     setIsOpen(true);
   }

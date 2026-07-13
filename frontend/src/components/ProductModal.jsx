@@ -5,8 +5,21 @@ export default function ProductModal({ product, onClose, onAdd }) {
   const [added, setAdded] = useState(false);
   const specs = product.specs && Object.keys(product.specs).length > 0 ? product.specs : null;
 
+  const storageOptions = product.variants?.storage || null;
+  const colorOptions = product.variants?.color || null;
+  const [storage, setStorage] = useState(storageOptions ? storageOptions[0].value : null);
+  const [color, setColor] = useState(colorOptions ? colorOptions[0] : null);
+
+  // Effective price follows the selected storage tier (falls back to base price).
+  const activeStorage = storageOptions?.find((s) => s.value === storage) || null;
+  const effectivePrice = activeStorage ? activeStorage.price : product.price;
+
   function handleAdd() {
-    onAdd();
+    onAdd({
+      storage: storage || undefined,
+      color: color || undefined,
+      price: effectivePrice,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   }
@@ -41,15 +54,70 @@ export default function ProductModal({ product, onClose, onAdd }) {
           <h2 className="mt-1 font-display text-2xl font-700 text-ink">{product.name}</h2>
           <p className="mt-1 text-sm text-ink/50">{product.spec}</p>
 
-          <div className="mt-4 flex items-center gap-3">
-            <p className="font-display text-2xl font-700 text-ink">{formatGHS(product.price)}</p>
-            {product.oldPrice && (
-              <p className="text-sm text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
-            )}
-            <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-600 text-ink/60">
-              {product.condition}
-            </span>
-          </div>
+           <div className="mt-4 flex items-center gap-3">
+             <p className="font-display text-2xl font-700 text-ink">{formatGHS(effectivePrice)}</p>
+             {product.oldPrice && (
+               <p className="text-sm text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
+             )}
+             <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-600 text-ink/60">
+               {product.condition}
+             </span>
+           </div>
+
+           {storageOptions && (
+             <div className="mt-5">
+               <p className="text-xs font-700 uppercase tracking-wide text-ink/60">Storage</p>
+               <div className="mt-2 flex flex-wrap gap-2">
+                 {storageOptions.map((opt) => {
+                   const selected = opt.value === storage;
+                   return (
+                     <button
+                       key={opt.value}
+                       onClick={() => setStorage(opt.value)}
+                       className={`focus-ring rounded-xl border px-4 py-2 text-sm font-600 transition-colors ${
+                         selected
+                           ? "border-ink bg-ink text-cream"
+                           : "border-ink/15 text-ink/70 hover:border-ink/40"
+                       }`}
+                     >
+                       {opt.value}
+                       {opt.price !== effectivePrice && (
+                         <span className={selected ? "ml-1 text-cream/70" : "ml-1 text-ink/40"}>
+                           {formatGHS(opt.price)}
+                         </span>
+                       )}
+                     </button>
+                   );
+                 })}
+               </div>
+             </div>
+           )}
+
+           {colorOptions && (
+             <div className="mt-5">
+               <p className="text-xs font-700 uppercase tracking-wide text-ink/60">
+                 Colour{color ? ` — ${color.name}` : ""}
+               </p>
+               <div className="mt-2 flex flex-wrap gap-2">
+                 {colorOptions.map((opt) => {
+                   const selected = color && color.name === opt.name;
+                   return (
+                     <button
+                       key={opt.name}
+                       title={opt.name}
+                       onClick={() => setColor(opt)}
+                       aria-label={opt.name}
+                       className={`focus-ring h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 ${
+                         selected ? "border-ink ring-2 ring-ink/20" : "border-ink/15"
+                       }`}
+                       style={{ backgroundColor: opt.hex }}
+                     />
+                   );
+                 })}
+               </div>
+             </div>
+           )}
+
 
           {specs && (
             <div className="mt-6">
@@ -83,7 +151,11 @@ export default function ProductModal({ product, onClose, onAdd }) {
             </button>
             <a
               href={`https://wa.me/233541533365?text=${encodeURIComponent(
-                `Hi Cboyistore, I'm interested in the ${product.name} (${formatGHS(product.price)}).`
+                `Hi Cboyistore, I'm interested in the ${product.name}${
+                  storage ? ` (${storage}` : ""
+                }${color ? `${storage ? ", " : " ("}${color.name})` : storage ? ")" : ""} — ${formatGHS(
+                  effectivePrice
+                )}).`
               )}`}
               target="_blank"
               rel="noreferrer"
