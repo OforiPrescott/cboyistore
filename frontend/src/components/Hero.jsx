@@ -44,17 +44,17 @@ export default function Hero() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <img
-                src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80"
+                src="/images/generated/iph-16-pro-max.svg"
                 alt="iPhone display"
                 className="col-span-2 h-56 w-full rounded-3xl object-cover shadow-2xl"
               />
               <img
-                src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80"
+                src="/images/generated/mbp-14-m3.svg"
                 alt="MacBook"
                 className="h-40 w-full rounded-3xl object-cover shadow-xl"
               />
               <img
-                src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400&q=80"
+                src="/images/generated/apple-watch-s10.svg"
                 alt="Apple Watch"
                 className="h-40 w-full rounded-3xl object-cover shadow-xl"
               />

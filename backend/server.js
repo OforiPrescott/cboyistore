@@ -18,7 +18,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(helmet());
+// Custom CSP: helmet's defaults block the storefront's external assets
+// (Unsplash/GitHub-hosted images, Google Maps iframe) and the Paystack
+// checkout script/iframe. Allow the specific origins we actually use.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", "data:", "https://images.unsplash.com"],
+        "script-src": ["'self'", "https://js.paystack.co"],
+        "connect-src": [
+          "'self'",
+          "https://api.paystack.co",
+          "https://checkout.paystack.com",
+        ],
+        "frame-src": [
+          "'self'",
+          "https://www.google.com",
+          "https://checkout.paystack.com",
+          "https://paystack.com",
+        ],
+      },
+    },
+  })
+);
 app.use(morgan("dev"));
 app.use(
   cors({
