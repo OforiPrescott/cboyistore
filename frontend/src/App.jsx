@@ -8,6 +8,7 @@ import WhyUs from "./components/WhyUs.jsx";
 import LocationMap from "./components/LocationMap.jsx";
 import Footer from "./components/Footer.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
+import ChatWidget from "./components/ChatWidget.jsx";
 import CheckoutSuccess from "./pages/CheckoutSuccess.jsx";
 import TradeIn from "./pages/TradeIn.jsx";
 
@@ -34,6 +35,7 @@ export default function App() {
       </Routes>
       <Footer />
       <CartDrawer />
+      <ChatWidget />
     </div>
   );
 }
