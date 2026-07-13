@@ -20,8 +20,14 @@ function linkify(text) {
   );
 }
 
-const GREETING =
-  "🔌 Hey! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me anything about our phones, laptops, trade-in or delivery — or tap a question below.";
+function timeGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+const GREETING = `🔌 ${timeGreeting()}! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me anything about our phones, laptops, trade-in or delivery — or tap a question below.`;
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);

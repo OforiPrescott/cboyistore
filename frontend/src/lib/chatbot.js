@@ -11,8 +11,11 @@ const INTENTS = [
   {
     id: "greeting",
     keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "yo", "sup"],
-    reply:
-      "Hey! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me about iPhones, MacBooks, delivery, trade-in or anything in the shop — or hit a quick question below.",
+    reply: () => {
+      const h = new Date().getHours();
+      const greet = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+      return `${greet}! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me about iPhones, MacBooks, delivery, trade-in or anything in the shop — or hit a quick question below.`;
+    },
   },
   {
     id: "what-sell",
