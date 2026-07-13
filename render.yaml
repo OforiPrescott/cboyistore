@@ -1,0 +1,35 @@
+# Render infrastructure-as-code for Cboyistore.
+# One web service builds the Vite frontend and serves it from the Express backend.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: cboyistore
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    # Install backend + frontend deps, then build the storefront.
+    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    # Serve the API (which also hosts the built frontend from ../frontend/dist).
+    startCommand: npm start --prefix backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PORT
+        value: "4000"
+      # The vars below are secrets — set them in the Render dashboard (sync: false).
+      # They are NOT read from this file or the repo.
+      - key: CLIENT_URL
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: ADMIN_KEY
+        sync: false
+      - key: ADMIN_ROUTE
+        sync: false
+      - key: WHATSAPP_NUMBER
+        sync: false
