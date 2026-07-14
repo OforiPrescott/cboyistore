@@ -3,6 +3,7 @@ import { formatGHS } from "../lib/format.js";
 import { useCart } from "../context/CartContext.jsx";
 import { whatsAppProductLink } from "../lib/whatsapp.js";
 import ProductModal from "./ProductModal.jsx";
+import { CartIcon } from "../lib/icons.jsx";
 
 function Stars({ rating = 4.5 }) {
   const full = Math.floor(rating);
@@ -158,7 +159,8 @@ export default function ProductCard({ product }) {
             <button
               onClick={handleAdd}
               disabled={outOfStock}
-              className={`focus-ring rounded-full px-4 py-2 text-xs font-600 transition-colors ${
+              aria-label={outOfStock ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
+              className={`focus-ring flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
                 outOfStock
                   ? "cursor-not-allowed bg-ink/10 text-ink/30"
                   : added
@@ -166,7 +168,7 @@ export default function ProductCard({ product }) {
                   : "bg-ink text-cream hover:bg-violet"
               }`}
             >
-              {outOfStock ? "Notify me" : added ? "Added ✓" : "Add to cart"}
+              <CartIcon className="h-5 w-5" />
             </button>
           </div>
         </div>

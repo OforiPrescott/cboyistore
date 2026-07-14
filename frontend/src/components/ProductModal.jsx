@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { formatGHS } from "../lib/format.js";
 import { useCart } from "../context/CartContext.jsx";
 import { whatsAppProductLink } from "../lib/whatsapp.js";
-import { HeartIcon, WhatsAppIcon } from "../lib/icons.jsx";
+import { HeartIcon, WhatsAppIcon, CartIcon } from "../lib/icons.jsx";
 
 export default function ProductModal({ product, onClose, onAdd }) {
   const { addToWishlist, wishlist } = useCart();
@@ -208,15 +208,16 @@ export default function ProductModal({ product, onClose, onAdd }) {
             <button
               onClick={handleAdd}
               disabled={product.stock === 0}
-              className={`focus-ring flex-1 rounded-full py-3.5 text-sm font-600 text-white shadow-lg transition-transform hover:scale-[1.02] ${
+              aria-label={product.stock === 0 ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
+              className={`focus-ring flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
                 product.stock === 0
-                  ? "cursor-not-allowed bg-ink/20 shadow-none hover:scale-100"
+                  ? "cursor-not-allowed bg-ink/20 text-ink/30"
                   : added
-                  ? "bg-emerald-600"
-                  : "bg-signal-gradient shadow-signal/30"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-signal-gradient text-white shadow-lg shadow-signal/30"
               }`}
             >
-              {product.stock === 0 ? "Out of stock" : added ? "Added to cart ✓" : "Add to cart"}
+              <CartIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
