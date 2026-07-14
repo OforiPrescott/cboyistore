@@ -82,7 +82,7 @@ export default function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <div className="border-t border-ink/10 px-6 py-5">
+          <div className="shrink-0 border-t border-ink/10 bg-cream px-6 py-5 shadow-[0_-6px_16px_rgba(0,0,0,0.05)]">
             <div className="flex items-center justify-between text-sm text-ink/60">
               <span>Subtotal</span>
               <span className="font-display text-lg font-700 text-ink">

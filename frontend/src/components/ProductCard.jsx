@@ -121,10 +121,6 @@ export default function ProductCard({ product }) {
               </svg>
             </button>
           </div>
-          <span className="absolute right-3 top-3 rounded-full bg-ink/80 px-3 py-1 text-[11px] font-600 text-cream backdrop-blur">
-            {product.condition}
-          </span>
-
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -156,20 +152,25 @@ export default function ProductCard({ product }) {
                 <p className="text-xs text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
               )}
             </div>
-            <button
-              onClick={handleAdd}
-              disabled={outOfStock}
-              aria-label={outOfStock ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
-              className={`focus-ring flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                outOfStock
-                  ? "cursor-not-allowed bg-ink/10 text-ink/30"
-                  : added
-                  ? "bg-emerald-600 text-white"
-                  : "bg-ink text-cream hover:bg-violet"
-              }`}
-            >
-              <CartIcon className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-ink/80 px-2.5 py-1 text-[10px] font-600 text-cream">
+                {product.condition}
+              </span>
+              <button
+                onClick={handleAdd}
+                disabled={outOfStock}
+                aria-label={outOfStock ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
+                className={`focus-ring flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                  outOfStock
+                    ? "cursor-not-allowed bg-ink/10 text-ink/30"
+                    : added
+                    ? "bg-emerald-600 text-white"
+                    : "bg-ink text-cream hover:bg-violet"
+                }`}
+              >
+                <CartIcon className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

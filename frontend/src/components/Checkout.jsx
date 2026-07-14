@@ -97,7 +97,7 @@ export default function Checkout({ onClose }) {
         className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
         {status === "success" ? (
           <div className="py-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/20 text-2xl">
