@@ -69,14 +69,6 @@ export default function DashboardPage() {
     return days.map((d) => Math.round(byDay[dayKey(d)]));
   }, [orders]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-32 text-ink/40">
-        <Spinner className="h-7 w-7" />
-      </div>
-    );
-  }
-
   const paidOrders = orders.filter((o) => o.status === "paid" || o.status === "fulfilled");
   const revenue = paidOrders.reduce((s, o) => s + o.total, 0);
   const pending = orders.filter((o) => o.status === "pending").length;
