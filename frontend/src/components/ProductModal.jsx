@@ -119,7 +119,11 @@ export default function ProductModal({ product, onClose, onAdd }) {
         </button>
 
         <div className="relative w-full shrink-0 bg-gradient-to-br from-ink/5 to-ink/10 sm:w-2/5">
-          <div className="aspect-square w-full">
+          {/* On mobile the image is a square hero. On tablet+ the row
+              stretches both columns to the same height, so the image
+              should fill the whole column instead of sitting inside a
+              small square with a big empty strip beneath it. */}
+          <div className="aspect-square w-full sm:aspect-auto sm:h-full">
             {current?.type === "video" ? (
               <video src={current.src} controls className="h-full w-full object-cover" />
             ) : (
