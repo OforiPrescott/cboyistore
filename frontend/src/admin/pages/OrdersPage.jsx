@@ -1,5 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Badge, Button, Drawer, EmptyState, Input, Spinner, cx } from "../ui.jsx";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Badge,
+  Button,
+  Drawer,
+  EmptyState,
+  Input,
+  Skeleton,
+  cx,
+  useSearchHotkey,
+} from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
 import { apiFetchOrders, apiUpdateOrderStatus } from "../api.js";
@@ -25,6 +34,9 @@ export default function OrdersPage() {
   const [accountFilter, setAccountFilter] = useState("all");
   const [selected, setSelected] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const searchRef = useRef(null);
+
+  useSearchHotkey(searchRef);
 
   async function load() {
     setLoading(true);
@@ -107,12 +119,21 @@ export default function OrdersPage() {
       </header>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search reference, name or phone…"
-          className="max-w-xs"
-        />
+        <div className="relative max-w-xs flex-1">
+          <Input
+            ref={searchRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search reference, name or phone…"
+            aria-label="Search orders"
+          />
+          <kbd
+            aria-hidden="true"
+            className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-ink/15 bg-cream px-1.5 py-0.5 text-[10px] font-600 text-ink/40 sm:block"
+          >
+            /
+          </kbd>
+        </div>
         <div className="flex flex-wrap gap-2">
           {["all", ...STATUS_ORDER].map((s) => (
             <button
@@ -132,57 +153,92 @@ export default function OrdersPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-32 text-ink/40">
-          <Spinner className="h-7 w-7" />
-        </div>
+        <OrdersSkeleton />
       ) : filtered.length === 0 ? (
         <EmptyState className="mt-6" title="No orders match" hint="Adjust the filters to see more." />
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-3xl bg-white shadow-sm ring-1 ring-ink/5">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-cream text-xs uppercase tracking-wide text-ink/50">
-              <tr>
-                <th className="px-4 py-3">Reference</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Items</th>
-                <th className="px-4 py-3">Total</th>
-                <th className="px-4 py-3">Placed</th>
-                <th className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink/5">
-              {filtered.map((o) => (
-                <tr
-                  key={o.id}
+        <>
+          {/* Desktop / tablet: proper table with a sticky header. */}
+          <div className="mt-6 hidden overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-ink/5 md:block">
+            <div className="max-h-[calc(100vh-16rem)] overflow-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="sticky top-0 z-10 bg-cream text-xs uppercase tracking-wide text-ink/50 shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">
+                  <tr>
+                    <th className="px-4 py-3">Reference</th>
+                    <th className="px-4 py-3">Customer</th>
+                    <th className="px-4 py-3">Items</th>
+                    <th className="px-4 py-3">Total</th>
+                    <th className="px-4 py-3">Placed</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ink/5">
+                  {filtered.map((o) => (
+                    <tr
+                      key={o.id}
+                      onClick={() => setSelected(o)}
+                      className="cursor-pointer transition-colors hover:bg-cream/60"
+                    >
+                      <td className="px-4 py-3 font-600 text-ink">{o.reference}</td>
+                      <td className="px-4 py-3">
+                        {o.customer?.name}
+                        <p className="text-xs text-ink/40">{o.customer?.phone}</p>
+                      </td>
+                      <td className="px-4 py-3 text-ink/60">{o.items?.length || 0}</td>
+                      <td className="px-4 py-3 font-600">{formatGHS(o.total)}</td>
+                      <td className="px-4 py-3 text-xs text-ink/40">
+                        {new Date(o.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">{statusBadge(o.status)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile: horizontal-scrolling tables are painful on phones, so
+              collapse each row into a tappable card. */}
+          <ul className="mt-6 space-y-3 md:hidden">
+            {filtered.map((o) => (
+              <li key={o.id}>
+                <button
                   onClick={() => setSelected(o)}
-                  className="cursor-pointer hover:bg-cream/60"
+                  className="focus-ring w-full rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-ink/5 transition active:scale-[0.99]"
                 >
-                  <td className="px-4 py-3 font-600 text-ink">{o.reference}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span>{o.customer?.name || "Guest"}</span>
-                      {o.userId ? (
-                        <Badge tone="green">Account</Badge>
-                      ) : (
-                        <Badge tone="neutral">Guest</Badge>
-                      )}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-600 text-ink">{o.reference}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-xs text-ink/50">
+                          {o.customer?.name || "Guest"} · {o.customer?.phone || "—"}
+                        </p>
+                        {o.userId ? (
+                          <Badge tone="green">Account</Badge>
+                        ) : (
+                          <Badge tone="neutral">Guest</Badge>
+                        )}
+                      </div>
+                      {o.customer?.email ? (
+                        <p className="truncate text-xs text-ink/40">{o.customer.email}</p>
+                      ) : null}
                     </div>
-                    <p className="text-xs text-ink/40">{o.customer?.phone || "—"}</p>
-                    {o.customer?.email ? (
-                      <p className="text-xs text-ink/40">{o.customer.email}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3 text-ink/60">{o.items?.length || 0}</td>
-                  <td className="px-4 py-3 font-600">{formatGHS(o.total)}</td>
-                  <td className="px-4 py-3 text-xs text-ink/40">
-                    {new Date(o.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3">{statusBadge(o.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {statusBadge(o.status)}
+                  </div>
+                  <div className="mt-3 flex items-center justify-between text-xs text-ink/50">
+                    <span>
+                      {o.items?.length || 0} item{(o.items?.length || 0) === 1 ? "" : "s"} ·{" "}
+                      {new Date(o.createdAt).toLocaleDateString()}
+                    </span>
+                    <span className="font-display text-sm font-700 text-ink">
+                      {formatGHS(o.total)}
+                    </span>
+                  </div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <Drawer
@@ -271,6 +327,16 @@ export default function OrdersPage() {
           </div>
         )}
       </Drawer>
+    </div>
+  );
+}
+
+function OrdersSkeleton() {
+  return (
+    <div className="mt-6 space-y-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Skeleton key={i} className="h-16 rounded-2xl md:h-14 md:rounded-xl" />
+      ))}
     </div>
   );
 }

@@ -1,5 +1,16 @@
 const BASE = "/api";
 
+// --- Auth ---
+
+// Confirm a typed admin key actually works before we stash it in
+// sessionStorage. Prevents the "logged in but every request 401s" trap.
+export async function apiVerifyAdmin(adminKey) {
+  const res = await fetch(`${BASE}/admin/verify`, {
+    headers: { "x-admin-key": adminKey },
+  });
+  return handle(res);
+}
+
 async function handle(res) {
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

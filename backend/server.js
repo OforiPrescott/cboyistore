@@ -14,6 +14,7 @@ import paystackRouter from "./routes/paystack.js";
 import tradeinRouter from "./routes/tradein.js";
 import uploadRouter from "./routes/upload.js";
 import authRouter from "./routes/auth.js";
+import adminRouter from "./routes/admin.js";
 
 dotenv.config();
 
@@ -80,6 +81,7 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/paystack", paystackRouter);
 app.use("/api/tradein", tradeinRouter);
 app.use("/api/upload", uploadRouter);
+app.use("/api/admin", adminRouter);
 
 // Serve the built storefront + staff admin (only when the frontend has been
 // built into ../frontend/dist). The admin is a separate app, kept off the

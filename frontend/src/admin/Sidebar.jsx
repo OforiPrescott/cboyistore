@@ -45,7 +45,18 @@ const nav = [
 ];
 
 export default function Sidebar({ onNavigate, className = "" }) {
-  const { logout, adminKey } = useAdmin();
+  const { logout, adminKey, confirm } = useAdmin();
+
+  async function handleLogout() {
+    const ok = await confirm({
+      title: "Log out?",
+      message: "You'll need to enter the admin key again to get back in.",
+      confirmLabel: "Log out",
+      tone: "dark",
+    });
+    if (ok) logout();
+  }
+
   return (
     <aside className={cx("flex w-60 flex-col border-r border-ink/10 bg-white", className)}>
       <div className="px-5 py-5">
@@ -85,7 +96,7 @@ export default function Sidebar({ onNavigate, className = "" }) {
           Key: {adminKey ? "••••••••" : "none"}
         </p>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="focus-ring mt-2 w-full rounded-xl px-3 py-2 text-left text-sm font-600 text-ink/50 hover:bg-ink/5"
         >
           Log out
