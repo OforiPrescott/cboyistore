@@ -87,7 +87,7 @@ const distDir = path.resolve(__dirname, "..", "frontend", "dist");
 if (existsSync(distDir)) {
   const adminRoute = process.env.ADMIN_ROUTE || "/admin";
   app.use(express.static(distDir));
-  app.get(adminRoute, (req, res) => {
+  app.get([adminRoute, "/admin.html"], (req, res) => {
     res.sendFile(path.join(distDir, "admin.html"));
   });
   // SPA fallback for the public storefront.
