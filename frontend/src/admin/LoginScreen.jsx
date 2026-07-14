@@ -48,9 +48,6 @@ export default function LoginScreen() {
             Sign in
           </Button>
         </form>
-        <p className="mt-4 text-center text-xs text-ink/40">
-          Protected area. The key lives in your backend <code>.env</code> file.
-        </p>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Badge, Card, EmptyState, Spinner, cx } from "../ui.jsx";
-import { Sparkline } from "../charts.jsx";
+import { Sparkline, BarRow, Donut } from "../charts.jsx";
+import { categories } from "../../data/categories.js";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
 import {
@@ -81,6 +82,30 @@ export default function DashboardPage() {
   const pending = orders.filter((o) => o.status === "pending").length;
   const lowStock = products.filter((p) => typeof p.stock === "number" && p.stock <= 5);
   const outOfStock = products.filter((p) => p.stock === 0);
+
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    for (const p of products) counts[p.category] = (counts[p.category] || 0) + 1;
+    return categories
+      .filter((c) => c.id !== "all")
+      .map((c) => ({ label: c.label, value: counts[c.id] || 0 }));
+  }, [products]);
+
+  const stockHealth = useMemo(() => {
+    let inStock = 0;
+    let low = 0;
+    let out = 0;
+    for (const p of products) {
+      if (p.stock === 0) out += 1;
+      else if (typeof p.stock === "number" && p.stock <= 5) low += 1;
+      else inStock += 1;
+    }
+    return [
+      { label: "Healthy", value: inStock, color: "#25D366" },
+      { label: "Low (≤5)", value: low, color: "#F2B705" },
+      { label: "Out", value: out, color: "#FF5A36" },
+    ];
+  }, [products]);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
@@ -165,6 +190,46 @@ export default function DashboardPage() {
               ))}
             </ul>
           )}
+        </Card>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Card>
+          <h2 className="font-display text-lg font-700 text-ink">Catalogue by category</h2>
+          {categoryCounts.every((c) => c.value === 0) ? (
+            <EmptyState className="mt-4" title="No products yet" />
+          ) : (
+            <div className="mt-4 space-y-4">
+              {categoryCounts.map((c) => (
+                <BarRow
+                  key={c.label}
+                  label={c.label}
+                  value={c.value}
+                  max={Math.max(...categoryCounts.map((x) => x.value))}
+                  sub={`${c.value} item${c.value === 1 ? "" : "s"}`}
+                  tone="#6C3CE0"
+                />
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <h2 className="font-display text-lg font-700 text-ink">Stock health</h2>
+          <div className="mt-4 flex items-center gap-6">
+            <Donut segments={stockHealth} />
+            <div className="flex-1 space-y-2">
+              {stockHealth.map((s) => (
+                <div key={s.label} className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-ink/70">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
+                    {s.label}
+                  </span>
+                  <span className="font-600 text-ink">{s.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </Card>
       </div>
 

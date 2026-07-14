@@ -84,7 +84,10 @@ http://localhost:5173/admin.html
 `ADMIN_ROUTE` in `backend/.env` to a non-obvious path (default `/admin`) and
 open `https://yourdomain.com<ADMIN_ROUTE>`. Don't link to it from the shop.
 
-Sign in with the `ADMIN_KEY` you set in `backend/.env`. From there you get a
+Sign in with the `ADMIN_KEY` you set in `backend/.env` (on Render, set it as
+an environment variable in the dashboard). If `ADMIN_KEY` is not set on the
+server it falls back to the local key so the dashboard still loads — but always
+set a custom `ADMIN_KEY` in production for security. From there you get a
 full CMS with a sidebar and four sections:
 
 - **Dashboard** — store overview: product count, paid orders, paid revenue,

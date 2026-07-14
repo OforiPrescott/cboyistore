@@ -39,10 +39,10 @@ const nav = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate, className = "" }) {
   const { logout, adminKey } = useAdmin();
   return (
-    <aside className="flex w-60 flex-col border-r border-ink/10 bg-white">
+    <aside className={cx("flex w-60 flex-col border-r border-ink/10 bg-white", className)}>
       <div className="px-5 py-5">
         <div className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-signal-gradient font-display text-lg font-700 text-white">
@@ -61,6 +61,7 @@ export default function Sidebar() {
             key={item.to}
             to={item.to}
             end={item.to === "/"}
+            onClick={onNavigate}
             className={({ isActive }) =>
               cx(
                 "focus-ring mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-600 transition",
