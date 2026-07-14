@@ -145,14 +145,14 @@ export default function ProductCard({ product }) {
           )}
           {outOfStock && <p className="text-[11px] font-600 text-ink/40">Out of stock</p>}
 
-          <div className="mt-3 flex items-end justify-between gap-2">
+          <div className="mt-3 flex flex-col gap-1.5">
             <div>
-              <p className="font-display text-lg font-700 text-ink">{formatGHS(product.price)}</p>
+              <p className="font-display text-base font-700 text-ink sm:text-lg">{formatGHS(product.price)}</p>
               {product.oldPrice && (
                 <p className="text-xs text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <span className="rounded-full bg-ink/80 px-2.5 py-1 text-[10px] font-600 text-cream">
                 {product.condition}
               </span>
@@ -160,7 +160,7 @@ export default function ProductCard({ product }) {
                 onClick={handleAdd}
                 disabled={outOfStock}
                 aria-label={outOfStock ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
-                className={`focus-ring flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                className={`focus-ring flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
                   outOfStock
                     ? "cursor-not-allowed bg-ink/10 text-ink/30"
                     : added
