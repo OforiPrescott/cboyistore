@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { answer, SUGGESTED, WHATSAPP_LINK } from "../lib/chatbot.js";
 import { useCart } from "../context/CartContext.jsx";
+import { useUI } from "../context/UIContext.jsx";
 import { fetchProducts } from "../lib/api.js";
 import ProductModal from "./ProductModal.jsx";
 import {
@@ -80,6 +81,7 @@ function ProductCardInline({ product, onAdd }) {
 
 export default function UnifiedChat() {
   const { addItem } = useCart();
+  const { modalOpen } = useUI();
   const [mode, setMode] = useState("assistant"); // "assistant" | "shop"
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([{ from: "bot", text: ASSISTANT_GREETING, mode: "assistant" }]);
@@ -190,7 +192,7 @@ export default function UnifiedChat() {
 
   return (
     <>
-      {!open && (
+      {!open && !modalOpen && (
         <button
           onClick={() => setOpen(true)}
           className="focus-ring fixed right-4 z-[70] flex items-center gap-2 rounded-full bg-signal-gradient px-5 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105 bottom-[calc(6rem+env(safe-area-inset-bottom))] sm:right-6 md:bottom-6"

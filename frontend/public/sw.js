@@ -1,4 +1,4 @@
-const CACHE = "cboyistore-v1";
+const CACHE = "cboyistore-v2";
 
 self.addEventListener("install", () => self.skipWaiting());
 
@@ -8,6 +8,12 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
+
+  // Never intercept cross-origin traffic (Unsplash hero images, Paystack
+  // scripts, Google Maps, fonts). The offline fallback below returns
+  // /index.html when a fetch fails, which renders as a broken image
+  // when the failing request was for a third-party asset.
+  if (url.origin !== self.location.origin) return;
 
   if (url.pathname.startsWith("/api/")) {
     e.respondWith(

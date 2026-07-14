@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatGHS } from "../lib/format.js";
 import { useCart } from "../context/CartContext.jsx";
+import { useModalRegistration } from "../context/UIContext.jsx";
 import { whatsAppProductLink } from "../lib/whatsapp.js";
 import { rateProduct } from "../lib/api.js";
 import { HeartIcon, WhatsAppIcon, CartIcon, CloseIcon } from "../lib/icons.jsx";
@@ -62,6 +63,8 @@ export default function ProductModal({ product, onClose, onAdd }) {
   const [added, setAdded] = useState(false);
   const addedTimer = useRef(null);
 
+  useModalRegistration();
+
   useEffect(() => {
     return () => {
       if (addedTimer.current) clearTimeout(addedTimer.current);
@@ -103,7 +106,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
       <button
         aria-label="Close"
         className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
