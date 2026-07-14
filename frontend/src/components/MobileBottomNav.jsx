@@ -66,7 +66,7 @@ export default function MobileBottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-white/95 backdrop-blur-lg pb-safe pt-1">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-white/95 backdrop-blur-lg pb-safe pt-1 md:hidden">
       <div className="mx-auto flex items-center justify-around">
         {NAV.map((item) => {
           const isActive = item.to === "/#shop" && location.hash === "#shop";
