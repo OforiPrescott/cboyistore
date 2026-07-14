@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { buildWhatsappLink, notifyShopBySms } from "../services/notifications.js";
 import { requireAdmin } from "../middleware/adminAuth.js";
 import { getUserFromRequest } from "./auth.js";
+import { logAudit, actorFromReq } from "../services/audit.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const file = path.join(__dirname, "..", "data", "orders.json");
@@ -62,7 +63,9 @@ router.post("/", async (req, res, next) => {
     database.data.orders.push(order);
     await database.write();
 
-    // Fire-and-forget: don't hold up checkout if SMS fails or isn't configured
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "order.created", target: order.reference, targetType: "order", details: `Order ${order.reference} created (${formatGHS(order.total)})` }).catch(() => {});
+
     notifyShopBySms(order).catch(() => {});
 
     res.status(201).json({ ...order, whatsappLink: buildWhatsappLink(order) });
@@ -123,10 +126,13 @@ router.put("/:reference/status", requireAdmin, async (req, res, next) => {
     const database = await getDb();
     const order = database.data.orders.find((o) => o.reference === req.params.reference);
     if (!order) return res.status(404).json({ error: "Order not found" });
+    const previous = order.status;
     order.status = status;
     if (status === "paid" && !order.paidAt) order.paidAt = new Date().toISOString();
     if (status === "fulfilled" && !order.fulfilledAt) order.fulfilledAt = new Date().toISOString();
     await database.write();
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "order.status_changed", target: order.reference, targetType: "order", details: `${previous} → ${status}` }).catch(() => {});
     res.json(order);
   } catch (err) {
     next(err);

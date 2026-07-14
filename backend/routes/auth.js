@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import { sendWelcomeEmail } from "../services/email.js";
+import { logAudit, actorFromReq } from "../services/audit.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const file = path.join(__dirname, "..", "data", "customers", "customers.json");
@@ -219,8 +220,12 @@ router.delete("/customers/:id", async (req, res, next) => {
     const index = database.data.users.findIndex((u) => u.id === targetId);
     if (index === -1) return res.status(404).json({ error: "Customer not found" });
 
+    const removed = database.data.users[index];
     database.data.users.splice(index, 1);
     await database.write();
+
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "customer.deleted", target: removed.id, targetType: "customer", details: `Deleted customer ${removed.name} (${removed.email})` }).catch(() => {});
 
     res.status(204).end();
   } catch (err) {

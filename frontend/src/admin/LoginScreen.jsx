@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Spinner } from "./ui.jsx";
 import { useAdmin } from "./AdminContext.jsx";
-import { apiVerifyAdmin } from "./api.js";
+import { apiVerifyAdmin, apiWorkerLogin } from "./api.js";
 
 export default function LoginScreen() {
-  const { setAdminKey } = useAdmin();
+  const { setAdminKey, setWorkerSession } = useAdmin();
+  const [mode, setMode] = useState("admin");
   const [keyInput, setKeyInput] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [checking, setChecking] = useState(false);
   const navigate = useNavigate();
 
-  async function handleLogin(e) {
+  async function handleAdminLogin(e) {
     e.preventDefault();
     const trimmed = keyInput.trim();
-    if (!trimmed) {
-      setError("Enter the admin key.");
-      return;
-    }
+    if (!trimmed) return setError("Enter the admin key.");
     setChecking(true);
     setError("");
     try {
@@ -25,11 +25,23 @@ export default function LoginScreen() {
       setAdminKey(trimmed);
       navigate("/");
     } catch (err) {
-      if (err.status === 401) {
-        setError("That key isn't valid. Try again.");
-      } else {
-        setError(err.message || "Couldn't reach the server. Try again.");
-      }
+      setError(err.status === 401 ? "That key isn't valid. Try again." : err.message || "Couldn't reach the server.");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  async function handleWorkerLogin(e) {
+    e.preventDefault();
+    if (!username.trim() || !password) return setError("Enter username and password.");
+    setChecking(true);
+    setError("");
+    try {
+      const data = await apiWorkerLogin({ username: username.trim(), password });
+      setWorkerSession(data.token, data.worker);
+      navigate("/");
+    } catch (err) {
+      setError(err.status === 401 ? "Invalid username or password." : err.message || "Couldn't reach the server.");
     } finally {
       setChecking(false);
     }
@@ -48,32 +60,67 @@ export default function LoginScreen() {
           </div>
         </div>
 
-        <form onSubmit={handleLogin} className="mt-6">
-          <div className="text-xs font-600 uppercase tracking-wide text-ink/50">Admin key</div>
-          <Input
-            type="password"
-            autoFocus
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            placeholder="Enter your admin key"
-            disabled={checking}
-            className="mt-1.5"
-          />
-          {error && (
-            <p role="alert" className="mt-2 text-sm text-signal">
-              {error}
-            </p>
-          )}
-          <Button type="submit" className="mt-4 w-full" disabled={checking}>
-            {checking ? (
-              <>
-                <Spinner className="h-4 w-4" /> Checking…
-              </>
-            ) : (
-              "Sign in"
-            )}
-          </Button>
-        </form>
+        <div className="mt-6 flex rounded-full bg-cream p-1">
+          <button
+            type="button"
+            onClick={() => { setMode("admin"); setError(""); }}
+            className={`flex-1 rounded-full py-2 text-sm font-600 transition ${mode === "admin" ? "bg-white text-ink shadow-sm" : "text-ink/50"}`}
+          >
+            Admin key
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode("worker"); setError(""); }}
+            className={`flex-1 rounded-full py-2 text-sm font-600 transition ${mode === "worker" ? "bg-white text-ink shadow-sm" : "text-ink/50"}`}
+          >
+            Worker
+          </button>
+        </div>
+
+        {mode === "admin" ? (
+          <form onSubmit={handleAdminLogin} className="mt-5">
+            <div className="text-xs font-600 uppercase tracking-wide text-ink/50">Admin key</div>
+            <Input
+              type="password"
+              autoFocus
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              placeholder="Enter your admin key"
+              disabled={checking}
+              className="mt-1.5"
+            />
+            {error && <p role="alert" className="mt-2 text-sm text-signal">{error}</p>}
+            <Button type="submit" className="mt-4 w-full" disabled={checking}>
+              {checking ? <><Spinner className="h-4 w-4" /> Checking…</> : "Sign in"}
+            </Button>
+          </form>
+        ) : (
+          <form onSubmit={handleWorkerLogin} className="mt-5">
+            <div className="text-xs font-600 uppercase tracking-wide text-ink/50">Username</div>
+            <Input
+              type="text"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="worker username"
+              disabled={checking}
+              className="mt-1.5"
+            />
+            <div className="mt-3 text-xs font-600 uppercase tracking-wide text-ink/50">Password</div>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="password"
+              disabled={checking}
+              className="mt-1.5"
+            />
+            {error && <p role="alert" className="mt-2 text-sm text-signal">{error}</p>}
+            <Button type="submit" className="mt-4 w-full" disabled={checking}>
+              {checking ? <><Spinner className="h-4 w-4" /> Signing in…</> : "Sign in"}
+            </Button>
+          </form>
+        )}
       </div>
     </div>
   );

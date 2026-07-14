@@ -42,15 +42,30 @@ const nav = [
     label: "Trade-in",
     icon: <Icon path={<><path d="M4 7h13l-3-3M20 17H7l3 3" /></>} />,
   },
+  {
+    to: "/workers",
+    label: "Workers",
+    roles: ["admin"],
+    icon: <Icon path={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>} />,
+  },
+  {
+    to: "/audit",
+    label: "Audit log",
+    roles: ["admin"],
+    icon: <Icon path={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></>} />,
+  },
 ];
 
 export default function Sidebar({ onNavigate, className = "" }) {
-  const { logout, adminKey, confirm } = useAdmin();
+  const { logout, adminKey, workerInfo, confirm } = useAdmin();
+
+  const currentRole = workerInfo?.role || "admin";
+  const visibleNav = nav.filter((item) => !item.roles || item.roles.includes(currentRole));
 
   async function handleLogout() {
     const ok = await confirm({
       title: "Log out?",
-      message: "You'll need to enter the admin key again to get back in.",
+      message: "You'll need to sign in again to access the CMS.",
       confirmLabel: "Log out",
       tone: "dark",
     });
@@ -69,10 +84,16 @@ export default function Sidebar({ onNavigate, className = "" }) {
             <p className="text-[11px] text-ink/40">Staff CMS</p>
           </div>
         </div>
+        {workerInfo && (
+          <div className="mt-3 rounded-xl bg-cream px-3 py-2">
+            <p className="text-xs font-700 text-ink">{workerInfo.name}</p>
+            <p className="text-[11px] text-ink/50 capitalize">{workerInfo.role} &middot; {workerInfo.username}</p>
+          </div>
+        )}
       </div>
 
       <nav className="flex-1 px-3">
-        {nav.map((item) => (
+        {visibleNav.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -92,9 +113,11 @@ export default function Sidebar({ onNavigate, className = "" }) {
       </nav>
 
       <div className="border-t border-ink/10 px-4 py-4">
-        <p className="truncate text-[11px] text-ink/40" title={adminKey}>
-          Key: {adminKey ? "••••••••" : "none"}
-        </p>
+        {adminKey && !workerInfo && (
+          <p className="truncate text-[11px] text-ink/40" title={adminKey}>
+            Key: {adminKey ? "••••••••" : "none"}
+          </p>
+        )}
         <button
           onClick={handleLogout}
           className="focus-ring mt-2 w-full rounded-xl px-3 py-2 text-left text-sm font-600 text-ink/50 hover:bg-ink/5"

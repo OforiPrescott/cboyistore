@@ -131,7 +131,66 @@ export async function apiUpdateTradein(adminKey, id, patch) {
 export async function apiDeleteTradein(adminKey, id) {
   const res = await fetch(`${BASE}/tradein/admin/${id}`, {
     method: "DELETE",
+    headers: { "x-admin-key": adminKey },
+  });
+  return handle(res);
+}
+
+// --- Workers ---
+
+export async function apiWorkerLogin(payload) {
+  const res = await fetch(`${BASE}/admin/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function apiFetchWorkers(adminKey) {
+  const res = await fetch(`${BASE}/admin/workers`, { headers: authHeaders(adminKey, false) });
+  return handle(res);
+}
+
+export async function apiCreateWorker(adminKey, worker) {
+  const res = await fetch(`${BASE}/admin/workers`, {
+    method: "POST",
+    headers: authHeaders(adminKey),
+    body: JSON.stringify(worker),
+  });
+  return handle(res);
+}
+
+export async function apiUpdateWorker(adminKey, id, patch) {
+  const res = await fetch(`${BASE}/admin/workers/${id}`, {
+    method: "PUT",
+    headers: authHeaders(adminKey),
+    body: JSON.stringify(patch),
+  });
+  return handle(res);
+}
+
+export async function apiDeleteWorker(adminKey, id) {
+  const res = await fetch(`${BASE}/admin/workers/${id}`, {
+    method: "DELETE",
     headers: authHeaders(adminKey, false),
   });
   return handle(res);
 }
+
+// --- Audit ---
+
+export async function apiFetchAudit(adminKey, params = {}) {
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== "") qs.set(k, v);
+  }
+  const res = await fetch(`${BASE}/admin/audit?${qs.toString()}`, { headers: authHeaders(adminKey, false) });
+  return handle(res);
+}
+
+export async function apiFetchAuditSummary(adminKey) {
+  const res = await fetch(`${BASE}/admin/audit/summary`, { headers: authHeaders(adminKey, false) });
+  return handle(res);
+}
+

@@ -9,9 +9,11 @@ import OrdersPage from "./pages/OrdersPage.jsx";
 import AnalyticsPage from "./pages/AnalyticsPage.jsx";
 import CustomersPage from "./pages/CustomersPage.jsx";
 import TradeInPage from "./pages/TradeInPage.jsx";
+import WorkersPage from "./pages/WorkersPage.jsx";
+import AuditLogPage from "./pages/AuditLogPage.jsx";
 
 function Shell() {
-  const { isAuthed } = useAdmin();
+  const { isAuthed, workerInfo } = useAdmin();
   const [navOpen, setNavOpen] = useState(false);
   if (!isAuthed) return <LoginScreen />;
   return (
@@ -27,6 +29,9 @@ function Shell() {
                 C
               </span>
               <span className="font-display text-sm font-700 text-ink">Cboyistore CMS</span>
+              {workerInfo && (
+                <span className="text-[11px] text-ink/50 capitalize">{workerInfo.role}</span>
+              )}
             </div>
             <button
               onClick={() => setNavOpen(true)}
@@ -47,6 +52,8 @@ function Shell() {
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/customers" element={<CustomersPage />} />
               <Route path="/trade-in" element={<TradeInPage />} />
+              <Route path="/workers" element={<WorkersPage />} />
+              <Route path="/audit" element={<AuditLogPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

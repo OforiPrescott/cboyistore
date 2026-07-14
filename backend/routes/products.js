@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import { requireAdmin } from "../middleware/adminAuth.js";
+import { logAudit, actorFromReq } from "../services/audit.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataPath = path.join(__dirname, "..", "data", "products.json");
@@ -86,7 +87,6 @@ router.post("/", requireAdmin, async (req, res, next) => {
       images,
       video: body.video || undefined,
       badge: body.badge || undefined,
-      // Preserve richer catalogue fields configured from the admin dashboard.
       specs: body.specs,
       stock: body.stock !== undefined && body.stock !== "" ? Number(body.stock) : undefined,
       rating: body.rating ? Number(body.rating) : undefined,
@@ -95,6 +95,8 @@ router.post("/", requireAdmin, async (req, res, next) => {
     products.push(product);
     await saveProducts(products);
     res.status(201).json(product);
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "product.created", target: product.id, targetType: "product", details: `Created ${product.name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }
@@ -115,6 +117,8 @@ router.put("/:id", requireAdmin, async (req, res, next) => {
     products[index] = updated;
     await saveProducts(products);
     res.json(products[index]);
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "product.updated", target: updated.id, targetType: "product", details: `Updated ${updated.name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }
@@ -128,8 +132,11 @@ router.delete("/:id", requireAdmin, async (req, res, next) => {
     if (next_.length === products.length) {
       return res.status(404).json({ error: "Product not found" });
     }
+    const removed = products.find((p) => p.id === req.params.id);
     await saveProducts(next_);
     res.status(204).end();
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "product.deleted", target: removed.id, targetType: "product", details: `Deleted ${removed.name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }

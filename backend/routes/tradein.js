@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import { requireAdmin } from "../middleware/adminAuth.js";
+import { logAudit, actorFromReq } from "../services/audit.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataPath = path.join(__dirname, "..", "data", "tradein.json");
@@ -98,6 +99,8 @@ router.post("/admin", requireAdmin, async (req, res, next) => {
     devices.push(device);
     await saveDevices(devices);
     res.status(201).json(device);
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "tradein.device_created", target: device.id, targetType: "tradein_device", details: `Added trade-in device ${device.name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }
@@ -115,6 +118,8 @@ router.put("/admin/:id", requireAdmin, async (req, res, next) => {
     if (req.body.name !== undefined) devices[index].name = String(req.body.name).trim();
     await saveDevices(devices);
     res.json(devices[index]);
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "tradein.device_updated", target: devices[index].id, targetType: "tradein_device", details: `Updated trade-in device ${devices[index].name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }
@@ -128,8 +133,11 @@ router.delete("/admin/:id", requireAdmin, async (req, res, next) => {
     if (next_.length === devices.length) {
       return res.status(404).json({ error: "Device not found" });
     }
+    const removed = devices.find((d) => d.id === req.params.id);
     await saveDevices(next_);
     res.status(204).end();
+    const actor = actorFromReq(req);
+    logAudit({ ...actor, action: "tradein.device_deleted", target: removed.id, targetType: "tradein_device", details: `Deleted trade-in device ${removed.name}` }).catch(() => {});
   } catch (err) {
     next(err);
   }

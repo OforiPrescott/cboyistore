@@ -10,11 +10,24 @@ export function useAdmin() {
 }
 
 const STORAGE_KEY = "cboyistore_admin_key";
+const WORKER_TOKEN_KEY = "cboyistore_worker_token";
+const WORKER_INFO_KEY = "cboyistore_worker_info";
 
 export function AdminProvider({ children }) {
   const [adminKey, setAdminKeyState] = useState(
     () => sessionStorage.getItem(STORAGE_KEY) || ""
   );
+  const [workerToken, setWorkerTokenState] = useState(
+    () => sessionStorage.getItem(WORKER_TOKEN_KEY) || ""
+  );
+  const [workerInfo, setWorkerInfoState] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem(WORKER_INFO_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
   const [toasts, setToasts] = useState([]);
   const [confirmState, setConfirmState] = useState(null);
 
@@ -32,9 +45,20 @@ export function AdminProvider({ children }) {
     setAdminKeyState(key);
   }, []);
 
+  const setWorkerSession = useCallback((token, info) => {
+    sessionStorage.setItem(WORKER_TOKEN_KEY, token);
+    sessionStorage.setItem(WORKER_INFO_KEY, JSON.stringify(info));
+    setWorkerTokenState(token);
+    setWorkerInfoState(info);
+  }, []);
+
   const logout = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(WORKER_TOKEN_KEY);
+    sessionStorage.removeItem(WORKER_INFO_KEY);
     setAdminKeyState("");
+    setWorkerTokenState("");
+    setWorkerInfoState(null);
   }, []);
 
   const confirm = useCallback(
@@ -60,9 +84,21 @@ export function AdminProvider({ children }) {
     info: "bg-violet text-white",
   };
 
+  const isAuthed = Boolean(adminKey || workerToken);
+
   return (
     <AdminContext.Provider
-      value={{ adminKey, setAdminKey, logout, notify, confirm, isAuthed: Boolean(adminKey) }}
+      value={{
+        adminKey,
+        setAdminKey,
+        workerToken,
+        workerInfo,
+        setWorkerSession,
+        logout,
+        notify,
+        confirm,
+        isAuthed,
+      }}
     >
       {children}
 

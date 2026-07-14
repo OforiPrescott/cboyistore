@@ -1,15 +1,27 @@
-// Lightweight admin protection: the /admin frontend sends the key typed
-// into its login screen as an `x-admin-key` header on every request.
-// Good enough for a single-owner shop dashboard; swap for real auth
-// (sessions, hashed passwords, multiple staff accounts) if you grow the team.
-//
-// On platforms like Render the ADMIN_KEY is set via an environment variable.
-// If it's missing (e.g. not configured yet), fall back to the same key used
-// locally so the dashboard still works — but always prefer setting ADMIN_KEY
-// in the host's dashboard for production.
+import jwt from "jsonwebtoken";
+import { getWorkerFromRequest, decodeWorkerToken } from "./workerAuth.js";
+
 const FALLBACK_KEY = "CboyIstore@2026";
 
 export function requireAdmin(req, res, next) {
+  let worker = null;
+
+  if (req.header("authorization")?.startsWith("Bearer ")) {
+    const token = req.header("authorization").slice(7);
+    const payload = decodeWorkerToken(token);
+    if (payload && payload.type === "worker") {
+      return getWorkerFromRequest(req)
+        .then((w) => {
+          if (!w) return res.status(401).json({ error: "Invalid or expired worker session" });
+          if (!w.active) return res.status(403).json({ error: "Worker account is disabled" });
+          if (w.role !== "admin") return res.status(403).json({ error: "Admin role required" });
+          req.worker = w;
+          next();
+        })
+        .catch((err) => next(err));
+    }
+  }
+
   const key = req.header("x-admin-key");
   const expected = process.env.ADMIN_KEY || FALLBACK_KEY;
 
@@ -24,4 +36,10 @@ export function requireAdmin(req, res, next) {
     return res.status(401).json({ error: "Invalid admin key" });
   }
   next();
+}
+
+export function isAdminKey(req) {
+  const key = req.header("x-admin-key");
+  const expected = process.env.ADMIN_KEY || FALLBACK_KEY;
+  return key && key === expected;
 }
