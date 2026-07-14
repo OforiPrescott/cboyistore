@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AreaChart, BarRow, Donut, Sparkline } from "../charts.jsx";
-import { Badge, Button, Card, EmptyState, Spinner, cx } from "../ui.jsx";
+import { Badge, Button, Card, EmptyState, Skeleton, cx } from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
 import { apiFetchOrders, apiFetchProducts } from "../api.js";
@@ -178,11 +178,7 @@ export default function AnalyticsPage() {
   const maxStatus = statusSegments.length ? Math.max(...statusSegments.map((s) => s.value)) : 1;
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-32 text-ink/40">
-        <Spinner className="h-7 w-7" />
-      </div>
-    );
+    return <AnalyticsSkeleton />;
   }
 
   return (
@@ -385,5 +381,36 @@ function Kpi({ label, value, sub, tone = "neutral", spark, sparkColor }) {
       </div>
       {sub && <p className="mt-1 text-xs text-ink/40">{sub}</p>}
     </Card>
+  );
+}
+
+function AnalyticsSkeleton() {
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="mt-2 h-4 w-72" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-20 rounded-full" />
+          <Skeleton className="h-10 w-28 rounded-full" />
+        </div>
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-3xl" />
+        ))}
+      </div>
+      <Skeleton className="mt-6 h-64 rounded-3xl" />
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-3xl" />
+        <Skeleton className="h-64 rounded-3xl" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-3xl" />
+        <Skeleton className="h-64 rounded-3xl" />
+      </div>
+    </div>
   );
 }

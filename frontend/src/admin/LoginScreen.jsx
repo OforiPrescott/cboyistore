@@ -1,23 +1,38 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, cx, Input } from "./ui.jsx";
+import { Button, Input, Spinner } from "./ui.jsx";
 import { useAdmin } from "./AdminContext.jsx";
+import { apiVerifyAdmin } from "./api.js";
 
 export default function LoginScreen() {
-  const { setAdminKey, adminKey } = useAdmin();
+  const { setAdminKey } = useAdmin();
   const [keyInput, setKeyInput] = useState("");
   const [error, setError] = useState("");
+  const [checking, setChecking] = useState(false);
   const navigate = useNavigate();
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (!keyInput.trim()) {
+    const trimmed = keyInput.trim();
+    if (!trimmed) {
       setError("Enter the admin key.");
       return;
     }
-    setAdminKey(keyInput.trim());
+    setChecking(true);
     setError("");
-    navigate("/");
+    try {
+      await apiVerifyAdmin(trimmed);
+      setAdminKey(trimmed);
+      navigate("/");
+    } catch (err) {
+      if (err.status === 401) {
+        setError("That key isn't valid. Try again.");
+      } else {
+        setError(err.message || "Couldn't reach the server. Try again.");
+      }
+    } finally {
+      setChecking(false);
+    }
   }
 
   return (
@@ -29,7 +44,7 @@ export default function LoginScreen() {
           </span>
           <div>
             <p className="font-display text-lg font-700 text-ink">Cboyistore CMS</p>
-            <p className="text-xs text-ink/40">Staff admin &middot; {adminKey ? "signed in" : "sign in"}</p>
+            <p className="text-xs text-ink/40">Staff admin &middot; sign in</p>
           </div>
         </div>
 
@@ -41,11 +56,22 @@ export default function LoginScreen() {
             value={keyInput}
             onChange={(e) => setKeyInput(e.target.value)}
             placeholder="Enter your admin key"
+            disabled={checking}
             className="mt-1.5"
           />
-          {error && <p className="mt-2 text-sm text-signal">{error}</p>}
-          <Button type="submit" className="mt-4 w-full">
-            Sign in
+          {error && (
+            <p role="alert" className="mt-2 text-sm text-signal">
+              {error}
+            </p>
+          )}
+          <Button type="submit" className="mt-4 w-full" disabled={checking}>
+            {checking ? (
+              <>
+                <Spinner className="h-4 w-4" /> Checking…
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
       </div>

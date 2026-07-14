@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Drawer, EmptyState, Field, Input, Spinner } from "../ui.jsx";
+import { Badge, Button, Drawer, EmptyState, Field, Input, Skeleton } from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
 import {
@@ -137,8 +137,10 @@ export default function TradeInPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-32 text-ink/40">
-          <Spinner className="h-7 w-7" />
+        <div className="mt-6 space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-14 rounded-2xl" />
+          ))}
         </div>
       ) : devices.length === 0 ? (
         <EmptyState

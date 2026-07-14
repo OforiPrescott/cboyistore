@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export function cx(...parts) {
   return parts.filter(Boolean).join(" ");
@@ -62,17 +62,29 @@ export function Field({ label, hint, children, className = "" }) {
 const inputBase =
   "focus-ring w-full rounded-xl border border-ink/10 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-ink/30";
 
-export function Input(props) {
-  return <input {...props} className={cx(inputBase, props.className || "")} />;
-}
+export const Input = React.forwardRef(function Input(props, ref) {
+  return <input ref={ref} {...props} className={cx(inputBase, props.className || "")} />;
+});
 
-export function Textarea(props) {
-  return <textarea {...props} className={cx(inputBase, "resize-y", props.className || "")} />;
-}
+export const Textarea = React.forwardRef(function Textarea(props, ref) {
+  return (
+    <textarea
+      ref={ref}
+      {...props}
+      className={cx(inputBase, "resize-y", props.className || "")}
+    />
+  );
+});
 
-export function Select(props) {
-  return <select {...props} className={cx(inputBase, "appearance-none", props.className || "")} />;
-}
+export const Select = React.forwardRef(function Select(props, ref) {
+  return (
+    <select
+      ref={ref}
+      {...props}
+      className={cx(inputBase, "appearance-none", props.className || "")}
+    />
+  );
+});
 
 const badgeStyles = {
   neutral: "bg-ink/5 text-ink/60",
@@ -123,9 +135,35 @@ export function StatCard({ label, value, sub, tone = "neutral" }) {
   );
 }
 
-export function EmptyState({ title, hint, action }) {
+// Pressing "/" focuses the passed input ref — a standard "quick search" hotkey.
+// Ignored while the user is typing in another field so it doesn't fight input.
+export function useSearchHotkey(ref) {
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== "/") return;
+      const el = document.activeElement;
+      const tag = el?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || el?.isContentEditable) return;
+      e.preventDefault();
+      ref.current?.focus();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [ref]);
+}
+
+export function Skeleton({ className = "" }) {
   return (
-    <div className="rounded-3xl border border-dashed border-ink/10 bg-white/50 p-10 text-center">
+    <div
+      aria-hidden="true"
+      className={cx("animate-pulse rounded-xl bg-ink/5", className)}
+    />
+  );
+}
+
+export function EmptyState({ title, hint, action, className = "" }) {
+  return (
+    <div className={cx("rounded-3xl border border-dashed border-ink/10 bg-white/50 p-10 text-center", className)}>
       <p className="font-600 text-ink">{title}</p>
       {hint && <p className="mt-1 text-sm text-ink/40">{hint}</p>}
       {action && <div className="mt-4 flex justify-center">{action}</div>}

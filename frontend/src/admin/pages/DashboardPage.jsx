@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Badge, Card, EmptyState, Spinner, cx } from "../ui.jsx";
+import { Badge, Card, EmptyState, Skeleton, cx } from "../ui.jsx";
 import { Sparkline, BarRow, Donut } from "../charts.jsx";
 import { categories } from "../../data/categories.js";
 import { useAdmin } from "../AdminContext.jsx";
@@ -51,6 +51,10 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // All hooks must run in the same order on every render — keep every
+  // useMemo above any early return, otherwise React throws
+  // "Rendered more hooks than during the previous render" the moment
+  // `loading` flips false.
   const revenueSpark = useMemo(() => {
     const days = [];
     const today = new Date();
@@ -68,20 +72,6 @@ export default function DashboardPage() {
     }
     return days.map((d) => Math.round(byDay[dayKey(d)]));
   }, [orders]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-32 text-ink/40">
-        <Spinner className="h-7 w-7" />
-      </div>
-    );
-  }
-
-  const paidOrders = orders.filter((o) => o.status === "paid" || o.status === "fulfilled");
-  const revenue = paidOrders.reduce((s, o) => s + o.total, 0);
-  const pending = orders.filter((o) => o.status === "pending").length;
-  const lowStock = products.filter((p) => typeof p.stock === "number" && p.stock <= 5);
-  const outOfStock = products.filter((p) => p.stock === 0);
 
   const categoryCounts = useMemo(() => {
     const counts = {};
@@ -106,6 +96,16 @@ export default function DashboardPage() {
       { label: "Out", value: out, color: "#FF5A36" },
     ];
   }, [products]);
+
+  const paidOrders = orders.filter((o) => o.status === "paid" || o.status === "fulfilled");
+  const revenue = paidOrders.reduce((s, o) => s + o.total, 0);
+  const pending = orders.filter((o) => o.status === "pending").length;
+  const lowStock = products.filter((p) => typeof p.stock === "number" && p.stock <= 5);
+  const outOfStock = products.filter((p) => p.stock === 0);
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
@@ -270,6 +270,34 @@ function ModernStat({ label, value, sub, tone = "neutral", spark }) {
         )}
       </div>
     </Card>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="mt-2 h-8 w-40" />
+          <Skeleton className="mt-2 h-4 w-56" />
+        </div>
+        <Skeleton className="h-10 w-36 rounded-full" />
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-28 rounded-3xl" />
+        ))}
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-3xl" />
+        <Skeleton className="h-64 rounded-3xl" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-3xl" />
+        <Skeleton className="h-64 rounded-3xl" />
+      </div>
+    </div>
   );
 }
 

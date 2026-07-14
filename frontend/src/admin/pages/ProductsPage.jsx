@@ -1,5 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Badge, Button, Drawer, EmptyState, Input, Select, Spinner, cx } from "../ui.jsx";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Badge,
+  Button,
+  Drawer,
+  EmptyState,
+  Input,
+  Select,
+  Skeleton,
+  cx,
+  useSearchHotkey,
+} from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
 import {
@@ -31,6 +41,9 @@ export default function ProductsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
+  const searchRef = useRef(null);
+
+  useSearchHotkey(searchRef);
 
   async function load() {
     setLoading(true);
@@ -141,12 +154,21 @@ export default function ProductsPage() {
       </header>
 
       <div className="mt-5 flex flex-wrap gap-3">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search name or brand…"
-          className="max-w-xs"
-        />
+        <div className="relative max-w-xs flex-1">
+          <Input
+            ref={searchRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name or brand…"
+            aria-label="Search products"
+          />
+          <kbd
+            aria-hidden="true"
+            className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-ink/15 bg-cream px-1.5 py-0.5 text-[10px] font-600 text-ink/40 sm:block"
+          >
+            /
+          </kbd>
+        </div>
         <Select value={category} onChange={(e) => setCategory(e.target.value)} className="max-w-[180px]">
           <option value="all">All categories</option>
           {categories
@@ -167,9 +189,7 @@ export default function ProductsPage() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-32 text-ink/40">
-          <Spinner className="h-7 w-7" />
-        </div>
+        <ProductsSkeleton />
       ) : filtered.length === 0 ? (
         <EmptyState
           className="mt-6"
@@ -261,6 +281,16 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete }) {
           Delete
         </Button>
       </div>
+    </div>
+  );
+}
+
+function ProductsSkeleton() {
+  return (
+    <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Skeleton key={i} className="h-48 rounded-3xl" />
+      ))}
     </div>
   );
 }
