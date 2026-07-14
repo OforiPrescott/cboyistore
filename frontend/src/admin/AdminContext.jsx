@@ -45,7 +45,10 @@ export function AdminProvider({ children }) {
           message: opts.message,
           confirmLabel: opts.confirmLabel || "Confirm",
           tone: opts.tone || "danger",
-          onResult: resolve,
+          onResult: (value) => {
+            setConfirmState(null);
+            resolve(value);
+          },
         });
       }),
     []

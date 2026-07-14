@@ -89,9 +89,16 @@ export default function UnifiedChat() {
   const [catalog, setCatalog] = useState([]);
   const scrollRef = useRef(null);
   const recognitionRef = useRef(null);
+  const typingTimer = useRef(null);
 
   useEffect(() => {
     fetchProducts({}).then(setCatalog).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typingTimer.current) clearTimeout(typingTimer.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -148,7 +155,8 @@ export default function UnifiedChat() {
     setInput("");
     setTyping(true);
 
-    setTimeout(() => {
+    if (typingTimer.current) clearTimeout(typingTimer.current);
+    typingTimer.current = setTimeout(() => {
       if (mode === "shop") {
         const products = findProducts(q);
         if (products.length > 0) {

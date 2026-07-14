@@ -1,12 +1,73 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { formatGHS } from "../lib/format.js";
 import { useCart } from "../context/CartContext.jsx";
 import { whatsAppProductLink } from "../lib/whatsapp.js";
-import { HeartIcon, WhatsAppIcon, CartIcon } from "../lib/icons.jsx";
+import { rateProduct } from "../lib/api.js";
+import { HeartIcon, WhatsAppIcon, CartIcon, CloseIcon } from "../lib/icons.jsx";
+
+function StarInput({ productId, currentRating }) {
+  const [hover, setHover] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleClick(value) {
+    if (loading || submitted) return;
+    setLoading(true);
+    try {
+      await rateProduct(productId, value);
+      setSubmitted(true);
+    } catch {
+      // silent — the fallback WhatsApp link still works
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const display = hover || currentRating || 0;
+
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={loading || submitted}
+          onClick={() => handleClick(star)}
+          onMouseEnter={() => setHover(star)}
+          onMouseLeave={() => setHover(0)}
+          aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+          className={`focus-ring disabled:cursor-not-allowed ${submitted ? "cursor-default" : "cursor-pointer"}`}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill={star <= display ? "#F2B705" : "none"}
+            stroke="#F2B705"
+            strokeWidth="1.5"
+          >
+            <polygon points="12 2 15 9 22 9 16.5 13.5 18.5 21 12 17 5.5 21 7.5 13.5 2 9 9 9" />
+          </svg>
+        </button>
+      ))}
+      {submitted && (
+        <span className="ml-1.5 text-xs font-600 text-emerald-600">Thanks for rating!</span>
+      )}
+    </div>
+  );
+}
 
 export default function ProductModal({ product, onClose, onAdd }) {
   const { addToWishlist, wishlist } = useCart();
   const [added, setAdded] = useState(false);
+  const addedTimer = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    };
+  }, []);
+
   const gallery = product.images?.length
     ? product.images
     : product.image
@@ -26,7 +87,6 @@ export default function ProductModal({ product, onClose, onAdd }) {
   const [color, setColor] = useState(colorOptions ? colorOptions[0] : null);
   const isWishlisted = wishlist.some((w) => w.productId === product.id);
 
-  // Effective price follows the selected storage tier (falls back to base price).
   const activeStorage = storageOptions?.find((s) => s.value === storage) || null;
   const effectivePrice = activeStorage ? activeStorage.price : product.price;
 
@@ -37,7 +97,8 @@ export default function ProductModal({ product, onClose, onAdd }) {
       price: effectivePrice,
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+    if (addedTimer.current) clearTimeout(addedTimer.current);
+    addedTimer.current = setTimeout(() => setAdded(false), 1200);
   }
 
   return (
@@ -53,7 +114,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
           className="focus-ring absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 text-ink/60 shadow hover:bg-white hover:text-ink"
           aria-label="Close quick view"
         >
-          ✕
+          <CloseIcon className="h-5 w-5" />
         </button>
 
         <div className="relative w-full shrink-0 bg-gradient-to-br from-ink/5 to-ink/10 sm:w-2/5">
@@ -102,70 +163,78 @@ export default function ProductModal({ product, onClose, onAdd }) {
           <h2 className="mt-1 font-display text-2xl font-700 text-ink">{product.name}</h2>
           <p className="mt-1 text-sm text-ink/50">{product.spec}</p>
 
-           <div className="mt-4 flex items-center gap-3">
-             <p className="font-display text-2xl font-700 text-ink">{formatGHS(effectivePrice)}</p>
-             {product.oldPrice && (
-               <p className="text-sm text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
-             )}
-             <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-600 text-ink/60">
-               {product.condition}
-             </span>
-           </div>
+          <div className="mt-4 flex items-center gap-3">
+            <p className="font-display text-2xl font-700 text-ink">{formatGHS(effectivePrice)}</p>
+            {product.oldPrice && (
+              <p className="text-sm text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
+            )}
+            <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-600 text-ink/60">
+              {product.condition}
+            </span>
+          </div>
 
-           {storageOptions && (
-             <div className="mt-5">
-               <p className="text-xs font-700 uppercase tracking-wide text-ink/60">Storage</p>
-               <div className="mt-2 flex flex-wrap gap-2">
-                 {storageOptions.map((opt) => {
-                   const selected = opt.value === storage;
-                   return (
-                     <button
-                       key={opt.value}
-                       onClick={() => setStorage(opt.value)}
-                       className={`focus-ring rounded-xl border px-4 py-2 text-sm font-600 transition-colors ${
-                         selected
-                           ? "border-ink bg-ink text-cream"
-                           : "border-ink/15 text-ink/70 hover:border-ink/40"
-                       }`}
-                     >
-                       {opt.value}
-                       {opt.price !== effectivePrice && (
-                         <span className={selected ? "ml-1 text-cream/70" : "ml-1 text-ink/40"}>
-                           {formatGHS(opt.price)}
-                         </span>
-                       )}
-                     </button>
-                   );
-                 })}
-               </div>
-             </div>
-           )}
+          <div className="mt-3 flex items-center gap-2">
+            <StarInput productId={product.id} currentRating={product.rating} />
+            {product.ratingCount > 0 && (
+              <span className="text-xs text-ink/50">
+                {product.rating} ({product.ratingCount} review{product.ratingCount !== 1 ? "s" : ""})
+              </span>
+            )}
+          </div>
 
-           {colorOptions && (
-             <div className="mt-5">
-               <p className="text-xs font-700 uppercase tracking-wide text-ink/60">
-                 Colour{color ? ` — ${color.name}` : ""}
-               </p>
-               <div className="mt-2 flex flex-wrap gap-2">
-                 {colorOptions.map((opt) => {
-                   const selected = color && color.name === opt.name;
-                   return (
-                     <button
-                       key={opt.name}
-                       title={opt.name}
-                       onClick={() => setColor(opt)}
-                       aria-label={opt.name}
-                       className={`focus-ring h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 ${
-                         selected ? "border-ink ring-2 ring-ink/20" : "border-ink/15"
-                       }`}
-                       style={{ backgroundColor: opt.hex }}
-                     />
-                   );
-                 })}
-               </div>
-             </div>
-           )}
+          {storageOptions && (
+            <div className="mt-5">
+              <p className="text-xs font-700 uppercase tracking-wide text-ink/60">Storage</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {storageOptions.map((opt) => {
+                  const selected = opt.value === storage;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setStorage(opt.value)}
+                      className={`focus-ring rounded-xl border px-4 py-2 text-sm font-600 transition-colors ${
+                        selected
+                          ? "border-ink bg-ink text-cream"
+                          : "border-ink/15 text-ink/70 hover:border-ink/40"
+                      }`}
+                    >
+                      {opt.value}
+                      {opt.price !== effectivePrice && (
+                        <span className={selected ? "ml-1 text-cream/70" : "ml-1 text-ink/40"}>
+                          {formatGHS(opt.price)}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
+          {colorOptions && (
+            <div className="mt-5">
+              <p className="text-xs font-700 uppercase tracking-wide text-ink/60">
+                Colour{color ? ` — ${color.name}` : ""}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {colorOptions.map((opt) => {
+                  const selected = color && color.name === opt.name;
+                  return (
+                    <button
+                      key={opt.name}
+                      title={opt.name}
+                      onClick={() => setColor(opt)}
+                      aria-label={opt.name}
+                      className={`focus-ring h-9 w-9 rounded-full border-2 transition-transform hover:scale-110 ${
+                        selected ? "border-ink ring-2 ring-ink/20" : "border-ink/15"
+                      }`}
+                      style={{ backgroundColor: opt.hex }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {specs && (
             <div className="mt-6">
@@ -209,7 +278,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
               onClick={handleAdd}
               disabled={product.stock === 0}
               aria-label={product.stock === 0 ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
-              className={`focus-ring flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
+              className={`focus-ring flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-colors ${
                 product.stock === 0
                   ? "cursor-not-allowed bg-ink/20 text-ink/30"
                   : added

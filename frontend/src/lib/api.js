@@ -124,3 +124,12 @@ export async function deleteProduct(adminKey, id) {
     throw new Error(body.error || "Failed to delete product");
   }
 }
+
+export async function rateProduct(productId, rating) {
+  const res = await fetch(`${BASE}/products/${productId}/rate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ rating }),
+  });
+  return handle(res);
+}

@@ -134,3 +134,30 @@ router.delete("/:id", requireAdmin, async (req, res, next) => {
     next(err);
   }
 });
+
+// POST /api/products/:id/rate  — submit a customer star rating (public, no auth)
+router.post("/:id/rate", async (req, res, next) => {
+  try {
+    const products = await loadProducts();
+    const index = products.findIndex((p) => p.id === req.params.id);
+    if (index === -1) return res.status(404).json({ error: "Product not found" });
+
+    const rating = Number(req.body?.rating);
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: "Rating must be an integer between 1 and 5" });
+    }
+
+    const product = products[index];
+    product.ratings = Array.isArray(product.ratings) ? product.ratings : [];
+    product.ratings.push(rating);
+
+    const sum = product.ratings.reduce((acc, r) => acc + r, 0);
+    product.rating = Math.round((sum / product.ratings.length) * 10) / 10;
+    product.ratingCount = product.ratings.length;
+
+    await saveProducts(products);
+    res.json({ rating: product.rating, ratingCount: product.ratingCount });
+  } catch (err) {
+    next(err);
+  }
+});

@@ -5,7 +5,7 @@ import { whatsAppProductLink } from "../lib/whatsapp.js";
 import ProductModal from "./ProductModal.jsx";
 import { CartIcon } from "../lib/icons.jsx";
 
-function Stars({ rating = 4.5 }) {
+function Stars({ rating = 4.5, count }) {
   const full = Math.floor(rating);
   const half = rating - full >= 0.5;
   return (
@@ -26,6 +26,9 @@ function Stars({ rating = 4.5 }) {
           </svg>
         );
       })}
+      {count !== undefined && count > 0 && (
+        <span className="text-[11px] text-ink/40">({count})</span>
+      )}
     </div>
   );
 }
@@ -38,6 +41,13 @@ export default function ProductCard({ product }) {
   const [wishlisted, setWishlisted] = useState(() =>
     wishlist.some((w) => w.productId === product.id)
   );
+  const addedTimer = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    };
+  }, []);
 
   const hasVariants = Array.isArray(product.variants?.storage) && product.variants.storage.length > 0;
 
@@ -49,7 +59,8 @@ export default function ProductCard({ product }) {
     }
     addItem(product);
     setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+    if (addedTimer.current) clearTimeout(addedTimer.current);
+    addedTimer.current = setTimeout(() => setAdded(false), 1200);
   }
 
   function handleWishlist(e) {
@@ -135,7 +146,7 @@ export default function ProductCard({ product }) {
         <div className="flex flex-1 flex-col gap-1 p-4">
           <div className="flex items-center justify-between">
             <p className="text-xs font-600 uppercase tracking-wide text-violet">{product.brand}</p>
-            <Stars rating={product.rating} />
+            <Stars rating={product.rating} count={product.ratingCount} />
           </div>
           <h3 className="font-display text-base font-700 text-ink leading-snug">{product.name}</h3>
           <p className="line-clamp-1 text-xs text-ink/50">{product.spec}</p>
