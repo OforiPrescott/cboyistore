@@ -64,7 +64,7 @@ export default function Shop() {
   }, [category, query]);
 
   const brands = useMemo(() => {
-    const set = new Set(products.map((p) => p.brand));
+    const set = new Set((products || []).map((p) => p.brand).filter(Boolean));
     return ["all", ...Array.from(set).sort()];
   }, [products]);
 

@@ -68,27 +68,28 @@ export default function ProductModal({ product, onClose, onAdd }) {
     };
   }, []);
 
-  const gallery = product.images?.length
-    ? product.images
-    : product.image
-    ? [product.image]
+  const p = product || {};
+  const gallery = p.images?.length
+    ? p.images
+    : p.image
+    ? [p.image]
     : [];
   const media = [
     ...gallery.map((src) => ({ type: "image", src })),
-    ...(product.video ? [{ type: "video", src: product.video }] : []),
+    ...(p.video ? [{ type: "video", src: p.video }] : []),
   ];
   const [active, setActive] = useState(0);
   const current = media[Math.min(active, media.length - 1)] || media[0];
-  const specs = product.specs && Object.keys(product.specs).length > 0 ? product.specs : null;
+  const specs = p.specs && Object.keys(p.specs).length > 0 ? p.specs : null;
 
-  const storageOptions = product.variants?.storage || null;
-  const colorOptions = product.variants?.color || null;
+  const storageOptions = p.variants?.storage || null;
+  const colorOptions = p.variants?.color || null;
   const [storage, setStorage] = useState(storageOptions ? storageOptions[0].value : null);
   const [color, setColor] = useState(colorOptions ? colorOptions[0] : null);
-  const isWishlisted = wishlist.some((w) => w.productId === product.id);
+  const isWishlisted = wishlist.some((w) => w.productId === p.id);
 
   const activeStorage = storageOptions?.find((s) => s.value === storage) || null;
-  const effectivePrice = activeStorage ? activeStorage.price : product.price;
+  const effectivePrice = activeStorage ? activeStorage.price : p.price;
 
   function handleAdd() {
     onAdd({
@@ -123,15 +124,15 @@ export default function ProductModal({ product, onClose, onAdd }) {
               <video src={current.src} controls className="h-full w-full object-cover" />
             ) : (
               <img
-                src={current?.src || product.image}
-                alt={product.name}
+                src={current?.src || p.image}
+                alt={p.name}
                 className="h-full w-full object-cover"
               />
             )}
           </div>
-          {product.badge && (
+          {p.badge && (
             <span className="absolute left-4 top-4 rounded-full bg-signal px-3 py-1 text-[11px] font-700 uppercase tracking-wide text-white">
-              {product.badge}
+              {p.badge}
             </span>
           )}
           {media.length > 1 && (
@@ -159,25 +160,25 @@ export default function ProductModal({ product, onClose, onAdd }) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 sm:p-8">
-          <p className="text-xs font-600 uppercase tracking-wide text-violet">{product.brand}</p>
-          <h2 className="mt-1 font-display text-2xl font-700 text-ink">{product.name}</h2>
-          <p className="mt-1 text-sm text-ink/50">{product.spec}</p>
+          <p className="text-xs font-600 uppercase tracking-wide text-violet">{p.brand}</p>
+          <h2 className="mt-1 font-display text-2xl font-700 text-ink">{p.name}</h2>
+          <p className="mt-1 text-sm text-ink/50">{p.spec}</p>
 
           <div className="mt-4 flex items-center gap-3">
             <p className="font-display text-2xl font-700 text-ink">{formatGHS(effectivePrice)}</p>
-            {product.oldPrice && (
-              <p className="text-sm text-ink/40 line-through">{formatGHS(product.oldPrice)}</p>
+            {p.oldPrice && (
+              <p className="text-sm text-ink/40 line-through">{formatGHS(p.oldPrice)}</p>
             )}
             <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-600 text-ink/60">
-              {product.condition}
+              {p.condition}
             </span>
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <StarInput productId={product.id} currentRating={product.rating} />
-            {product.ratingCount > 0 && (
+            <StarInput productId={p.id} currentRating={p.rating} />
+            {p.ratingCount > 0 && (
               <span className="text-xs text-ink/50">
-                {product.rating} ({product.ratingCount} review{product.ratingCount !== 1 ? "s" : ""})
+                {p.rating} ({p.ratingCount} review{p.ratingCount !== 1 ? "s" : ""})
               </span>
             )}
           </div>
@@ -255,7 +256,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => {
-                addToWishlist(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice });
+                addToWishlist(p, { storage: storage || undefined, color: color || undefined, price: effectivePrice });
               }}
               className={`focus-ring inline-flex items-center gap-2 rounded-full border px-4 py-3.5 text-sm font-600 transition-colors ${
                 isWishlisted
@@ -267,7 +268,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
               {isWishlisted ? "Saved" : "Save"}
             </button>
             <a
-              href={whatsAppProductLink(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice })}
+              href={whatsAppProductLink(p, { storage: storage || undefined, color: color || undefined, price: effectivePrice })}
               target="_blank"
               rel="noreferrer"
               className="focus-ring inline-flex items-center gap-2 rounded-full border border-ink/10 px-5 py-3.5 text-sm font-600 text-ink hover:bg-ink/5"
@@ -276,10 +277,10 @@ export default function ProductModal({ product, onClose, onAdd }) {
             </a>
             <button
               onClick={handleAdd}
-              disabled={product.stock === 0}
-              aria-label={product.stock === 0 ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
+              disabled={p.stock === 0}
+              aria-label={p.stock === 0 ? "Out of stock" : added ? "Added to cart" : "Add to cart"}
               className={`focus-ring flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-colors ${
-                product.stock === 0
+                p.stock === 0
                   ? "cursor-not-allowed bg-ink/20 text-ink/30"
                   : added
                   ? "bg-emerald-600 text-white"
