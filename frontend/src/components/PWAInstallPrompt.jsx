@@ -29,7 +29,7 @@ export default function PWAInstallPrompt() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-20 z-[60] flex justify-center px-4 pointer-events-none">
+    <div className="fixed inset-x-0 z-[60] flex justify-center px-4 pointer-events-none bottom-[calc(8rem+env(safe-area-inset-bottom))] md:bottom-6">
       <div className="pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl bg-ink px-5 py-3.5 shadow-2xl ring-1 ring-white/10">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-signal/20 text-signal">
           <DownloadIcon className="h-5 w-5" />

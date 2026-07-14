@@ -40,3 +40,21 @@ body {
 .focus-ring {
   @apply outline-none focus-visible:ring-2 focus-visible:ring-violet focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
 }
+
+/* iOS home-indicator safe area — used by the fixed mobile bottom nav. */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Give storefront pages enough bottom padding on mobile so the fixed
+   MobileBottomNav doesn't sit on top of page content (footer, cart
+   totals, form submit buttons, etc.). Desktop has no bottom nav, so
+   the padding collapses to zero. */
+.pb-mobile-nav {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .pb-mobile-nav {
+    padding-bottom: 0;
+  }
+}
