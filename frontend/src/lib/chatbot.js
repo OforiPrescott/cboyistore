@@ -90,6 +90,18 @@ const INTENTS = [
       "Prices are listed on each product in Cedis (GHS). We keep fair Cedi prices and run New Arrival / Best Seller deals — check the badges on the cards.",
   },
   {
+    id: "recommendation",
+    keywords: ["recommend", "best for", "help choosing", "which phone", "which laptop", "good for", "suggest", "buying"],
+    reply:
+      "I can help narrow it down. For students, the MacBook Air or a lightweight Dell/HP laptop is great. For creators, the iPhone 15/16 Pro or a MacBook Pro is strong. For business use, the Samsung Galaxy S24 Ultra or a ThinkPad-style laptop is a solid pick.",
+  },
+  {
+    id: "installment",
+    keywords: ["installment", "installments", "pay later", "monthly", "credit", "finance"],
+    reply:
+      "We can discuss flexible payment options for qualified buyers. For the fastest answer, message us on WhatsApp and we’ll confirm availability and terms for your order.",
+  },
+  {
     id: "location",
     keywords: ["location", "address", "where", "direction", "map", "kumasi", "tafo", "mampong", "find you"],
     reply:
@@ -123,6 +135,8 @@ export const SUGGESTED = [
   "Do you deliver nationwide?",
   "How can I pay?",
   "Where is the shop?",
+  "I need help choosing a laptop",
+  "Can I buy on installment?",
 ];
 
 function scoreIntent(message, intent) {

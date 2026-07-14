@@ -34,13 +34,40 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([{ from: "bot", text: GREETING }]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [listening, setListening] = useState(false);
   const scrollRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, typing, open]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0]?.transcript || "")
+        .join(" ")
+        .trim();
+      if (transcript) {
+        setInput(transcript);
+        send(transcript);
+      }
+      setListening(false);
+    };
+    recognition.onerror = () => setListening(false);
+    recognition.onend = () => setListening(false);
+    recognitionRef.current = recognition;
+    return () => recognition.stop();
+  }, []);
 
   function send(text) {
     const q = (text ?? input).trim();
@@ -135,6 +162,23 @@ export default function ChatWidget() {
               placeholder="Ask Unplug Ur Plug…"
               className="focus-ring flex-1 rounded-full border border-ink/10 px-4 py-2.5 text-sm"
             />
+            <button
+              type="button"
+              onClick={() => {
+                if (!recognitionRef.current) return;
+                if (listening) {
+                  recognitionRef.current.stop();
+                  setListening(false);
+                } else {
+                  recognitionRef.current.start();
+                  setListening(true);
+                }
+              }}
+              aria-label="Voice input"
+              className={`focus-ring rounded-full px-3 py-2.5 text-sm font-600 ${listening ? "bg-gold text-ink" : "bg-cream text-ink/70"}`}
+            >
+              🎤
+            </button>
             <button
               type="submit"
               aria-label="Send"

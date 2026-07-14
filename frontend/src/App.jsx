@@ -11,6 +11,7 @@ import CartDrawer from "./components/CartDrawer.jsx";
 import ChatWidget from "./components/ChatWidget.jsx";
 import CheckoutSuccess from "./pages/CheckoutSuccess.jsx";
 import TradeIn from "./pages/TradeIn.jsx";
+import OrdersPage from "./pages/Orders.jsx";
 
 function Home() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/trade-in" element={<TradeIn />} />
+        <Route path="/orders" element={<OrdersPage />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
       </Routes>
       <Footer />

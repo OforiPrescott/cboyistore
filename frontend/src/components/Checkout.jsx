@@ -64,8 +64,18 @@ export default function Checkout({ onClose }) {
         },
         callback: (response) => {
           verifyPayment(response.reference)
-            .then(() => setStatus("success"))
-            .catch(() => setStatus("success")); // Paystack already confirmed client-side
+            .then((data) => {
+              if (data?.status === "success") {
+                setStatus("success");
+              } else {
+                setStatus("error");
+                setErrorMsg("Payment could not be confirmed yet. Please contact us if this persists.");
+              }
+            })
+            .catch(() => {
+              setStatus("error");
+              setErrorMsg("Payment confirmation hit an issue. Please contact us with your reference.");
+            });
           clearCart();
         },
         onClose: () => {

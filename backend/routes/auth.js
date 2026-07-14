@@ -23,6 +23,16 @@ const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret-change-me";
 const JWT_EXPIRES_IN = "7d";
 
+export function validatePassword(password) {
+  if (!password || password.length < 8) {
+    return { valid: false, reason: "Password must be at least 8 characters long" };
+  }
+  if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+    return { valid: false, reason: "Password must include uppercase letters and numbers" };
+  }
+  return { valid: true };
+}
+
 function sanitizeUser(user) {
   return {
     id: user.id,
@@ -84,6 +94,11 @@ router.post("/register", async (req, res, next) => {
     const { name, email, password, phone, location } = req.body;
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Name, email and password are required" });
+    }
+
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json({ error: passwordCheck.reason });
     }
 
     const database = await getDb();

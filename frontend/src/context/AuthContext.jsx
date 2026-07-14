@@ -4,9 +4,14 @@ import { apiRegister, apiLogin, apiMe } from "../lib/api.js";
 const AuthContext = createContext(null);
 const STORAGE_KEY = "cboyistore_auth_v1";
 
+function readStoredToken() {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(STORAGE_KEY) || "";
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEY) || "");
+  const [token, setToken] = useState(() => readStoredToken());
   const [loading, setLoading] = useState(Boolean(token));
 
   useEffect(() => {
@@ -14,12 +19,12 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    localStorage.setItem(STORAGE_KEY, token);
+    if (typeof window !== "undefined") window.localStorage.setItem(STORAGE_KEY, token);
     apiMe(token)
       .then(({ user }) => setUser(user))
       .catch(() => {
         setToken("");
-        localStorage.removeItem(STORAGE_KEY);
+        if (typeof window !== "undefined") window.localStorage.removeItem(STORAGE_KEY);
         setUser(null);
       })
       .finally(() => setLoading(false));
@@ -42,7 +47,7 @@ export function AuthProvider({ children }) {
   function logout() {
     setToken("");
     setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== "undefined") window.localStorage.removeItem(STORAGE_KEY);
   }
 
   const value = useMemo(() => ({ user, token, loading, register, login, logout, isAuthed: Boolean(user) }), [user, token, loading]);

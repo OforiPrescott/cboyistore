@@ -71,6 +71,21 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// GET /api/orders/me
+router.get("/me", async (req, res, next) => {
+  try {
+    const authUser = await getUserFromRequest(req);
+    if (!authUser) return res.status(401).json({ error: "Authentication required" });
+    const database = await getDb();
+    const orders = database.data.orders
+      .filter((o) => o.userId === authUser.id || o.customer?.email === authUser.email)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json(orders);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/orders/:reference
 router.get("/:reference", async (req, res, next) => {
   try {
@@ -125,6 +140,7 @@ export async function markOrderPaid(reference) {
   if (order) {
     order.status = "paid";
     order.paidAt = new Date().toISOString();
+    order.paymentVerified = true;
     await database.write();
   }
   return order;

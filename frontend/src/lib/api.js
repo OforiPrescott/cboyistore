@@ -27,6 +27,13 @@ export async function createOrder({ items, customer, token } = {}) {
   return handle(res);
 }
 
+export async function fetchMyOrders(token) {
+  const res = await fetch(`${BASE}/orders/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handle(res);
+}
+
 export async function initializePayment({ email, amount, reference, metadata }) {
   const res = await fetch(`${BASE}/paystack/initialize`, {
     method: "POST",
