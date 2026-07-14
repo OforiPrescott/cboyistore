@@ -84,12 +84,26 @@ http://localhost:5173/admin.html
 `ADMIN_ROUTE` in `backend/.env` to a non-obvious path (default `/admin`) and
 open `https://yourdomain.com<ADMIN_ROUTE>`. Don't link to it from the shop.
 
-Sign in with the `ADMIN_KEY` you set in `backend/.env`. From there you can:
+Sign in with the `ADMIN_KEY` you set in `backend/.env`. From there you get a
+full CMS with a sidebar and four sections:
 
-- Add, edit, or delete products — changes are saved straight to
+- **Dashboard** — store overview: product count, paid orders, paid revenue,
+  low-stock alerts, recent orders and a low-stock watchlist, plus a revenue
+  sparkline.
+- **Analytics** — sales intelligence: KPIs (paid/pending/gross revenue, avg
+  order value, items sold), a 7/14/30-day **sales trend** chart, a **payment
+  status** donut, a live **"Payments coming in"** feed (auto-refreshes), and
+  **top products** / **revenue by category** breakdowns.
+- **Products** — search, filter by category and sort the catalogue; add,
+  edit, duplicate or delete products (name, category, brand, condition, price,
+  old price, stock, rating, image with live preview, badge, full spec sheet,
+  and storage/colour variants). Changes save straight to
   `backend/data/products.json` and appear on the storefront immediately.
-- See every order that's come in, with customer contact, delivery method,
-  total, and payment status.
+- **Orders** — every order with customer contact, delivery method, items,
+  total and payment status; open any order for full details and the customer
+  WhatsApp link, and move it through `pending → paid → fulfilled → cancelled`.
+- **Trade-in** — manage the device list and base values used by the iSwap
+  estimator in `backend/data/tradein.json` (no more hand-editing JSON).
 
 Treat the admin key like a password — anyone with it can edit your catalogue.
 For a second staff member, just share the same key for now; if you need

@@ -36,7 +36,7 @@ export function CartProvider({ children }) {
           id: lineId,
           productId: product.id,
           name: product.name,
-          image: product.image,
+          image: product.images?.[0] || product.image,
           brand: product.brand,
           price,
           storage,

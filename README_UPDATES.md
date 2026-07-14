@@ -34,17 +34,21 @@
 - New `tablets` category (previously the iPad was miscategorised under
   Accessories).
 
-## Admin dashboard (frontend/src/pages/AdminDashboard.jsx)
+## Admin dashboard (frontend/src/admin/*)
 Already a separate app (own `admin.html` / `admin-entry.jsx`, its own login
 screen, and API calls gated behind `x-admin-key` on the backend) — kept that
-separation and extended it:
-- Stat cards at the top: total products, total orders, paid revenue, low
-  stock alerts.
-- Product form now also edits stock quantity and the full spec sheet (as
-  simple "Label: Value" lines, one per row) in addition to name, category,
-  brand, price, condition, image and badge.
-- Orders tab unchanged — still shows reference, customer, delivery method,
-  total and payment status.
+separation and rebuilt it as a proper sidebar CMS:
+- **Dashboard**: stat cards (products, paid orders, paid revenue, low stock)
+  plus recent-orders and low-stock watchlists.
+- **Products**: search, category filter and sort; add / edit / duplicate /
+  delete in a slide-over drawer; the form edits name, category, brand,
+  condition, price, old price, stock, rating, image (with live preview),
+  badge, the full spec sheet, and storage/colour variants.
+- **Orders**: filter by status, open full details (items, customer, delivery,
+  WhatsApp link) and move an order through pending → paid → fulfilled →
+  cancelled (new `PUT /api/orders/:reference/status`).
+- **Trade-in**: manage the device list and base values straight from the UI
+  (new admin CRUD at `/api/tradein/admin`) instead of hand-editing JSON.
 
 ## Notes for going live
 - Set a real `ADMIN_KEY` in `backend/.env` before deploying (it currently

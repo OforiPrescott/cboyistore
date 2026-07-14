@@ -65,7 +65,7 @@ export default function ProductCard({ product }) {
             </div>
           ) : (
             <img
-              src={product.image}
+              src={product.images?.[0] || product.image}
               alt={product.name}
               loading="lazy"
               onError={() => setImgError(true)}

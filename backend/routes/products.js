@@ -67,6 +67,9 @@ router.post("/", requireAdmin, async (req, res, next) => {
     if (!body.name || !body.category || !body.price) {
       return res.status(400).json({ error: "name, category and price are required" });
     }
+    const images = Array.isArray(body.images)
+      ? body.images.filter(Boolean).slice(0, 7)
+      : [];
     const product = {
       id: body.id || `${body.category}-${nanoid(6)}`,
       name: body.name,
@@ -76,7 +79,12 @@ router.post("/", requireAdmin, async (req, res, next) => {
       condition: body.condition || "Brand New",
       price: Number(body.price),
       oldPrice: body.oldPrice ? Number(body.oldPrice) : undefined,
-      image: body.image || "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
+      image:
+        body.image ||
+        images[0] ||
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
+      images,
+      video: body.video || undefined,
       badge: body.badge || undefined,
       // Preserve richer catalogue fields configured from the admin dashboard.
       specs: body.specs,
@@ -99,7 +107,12 @@ router.put("/:id", requireAdmin, async (req, res, next) => {
     const index = products.findIndex((p) => p.id === req.params.id);
     if (index === -1) return res.status(404).json({ error: "Product not found" });
 
-    products[index] = { ...products[index], ...req.body, id: products[index].id };
+    const updated = { ...products[index], ...req.body, id: products[index].id };
+    if (Array.isArray(updated.images)) {
+      updated.images = updated.images.filter(Boolean).slice(0, 7);
+      if (!updated.image && updated.images[0]) updated.image = updated.images[0];
+    }
+    products[index] = updated;
     await saveProducts(products);
     res.json(products[index]);
   } catch (err) {

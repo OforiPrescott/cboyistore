@@ -3,6 +3,17 @@ import { formatGHS } from "../lib/format.js";
 
 export default function ProductModal({ product, onClose, onAdd }) {
   const [added, setAdded] = useState(false);
+  const gallery = product.images?.length
+    ? product.images
+    : product.image
+    ? [product.image]
+    : [];
+  const media = [
+    ...gallery.map((src) => ({ type: "image", src })),
+    ...(product.video ? [{ type: "video", src: product.video }] : []),
+  ];
+  const [active, setActive] = useState(0);
+  const current = media[Math.min(active, media.length - 1)] || media[0];
   const specs = product.specs && Object.keys(product.specs).length > 0 ? product.specs : null;
 
   const storageOptions = product.variants?.storage || null;
@@ -40,12 +51,44 @@ export default function ProductModal({ product, onClose, onAdd }) {
           ✕
         </button>
 
-        <div className="relative aspect-square w-full shrink-0 bg-gradient-to-br from-ink/5 to-ink/10 sm:w-2/5">
-          <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+        <div className="relative w-full shrink-0 bg-gradient-to-br from-ink/5 to-ink/10 sm:w-2/5">
+          <div className="aspect-square w-full">
+            {current?.type === "video" ? (
+              <video src={current.src} controls className="h-full w-full object-cover" />
+            ) : (
+              <img
+                src={current?.src || product.image}
+                alt={product.name}
+                className="h-full w-full object-cover"
+              />
+            )}
+          </div>
           {product.badge && (
             <span className="absolute left-4 top-4 rounded-full bg-signal px-3 py-1 text-[11px] font-700 uppercase tracking-wide text-white">
               {product.badge}
             </span>
+          )}
+          {media.length > 1 && (
+            <div className="absolute inset-x-3 bottom-3 flex gap-2 overflow-x-auto rounded-2xl bg-white/90 p-2">
+              {media.map((m, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-lg ring-2 ${
+                    i === active ? "ring-ink" : "ring-transparent"
+                  }`}
+                >
+                  {m.type === "video" ? (
+                    <span className="flex h-full w-full items-center justify-center bg-ink text-sm text-cream">
+                      ▶
+                    </span>
+                  ) : (
+                    <img src={m.src} alt="" className="h-full w-full object-cover" />
+                  )}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

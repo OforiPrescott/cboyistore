@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 
@@ -11,12 +12,18 @@ import productsRouter from "./routes/products.js";
 import ordersRouter from "./routes/orders.js";
 import paystackRouter from "./routes/paystack.js";
 import tradeinRouter from "./routes/tradein.js";
+import uploadRouter from "./routes/upload.js";
 
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Uploaded product media (images + short videos) lives here and is served
+// under /api/uploads so it works in dev (proxied by Vite) and in prod.
+const uploadDir = path.resolve(__dirname, "uploads");
+fs.mkdirSync(uploadDir, { recursive: true });
 
 // Custom CSP: helmet's defaults block the storefront's external assets
 // (Unsplash/GitHub-hosted images, Google Maps iframe) and the Paystack
@@ -39,6 +46,7 @@ app.use(
           "https://checkout.paystack.com",
           "https://paystack.com",
         ],
+        "media-src": ["'self'"],
       },
     },
   })
@@ -53,6 +61,9 @@ app.use(
 // registers its own raw parser if you add signature verification later.
 app.use(express.json());
 
+// Serve uploaded product media (populated by POST /api/upload).
+app.use("/api/uploads", express.static(uploadDir, { maxAge: "7d" }));
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -66,6 +77,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/paystack", paystackRouter);
 app.use("/api/tradein", tradeinRouter);
+app.use("/api/upload", uploadRouter);
 
 // Serve the built storefront + staff admin (only when the frontend has been
 // built into ../frontend/dist). The admin is a separate app, kept off the

@@ -80,6 +80,28 @@ router.get("/", requireAdmin, async (req, res, next) => {
   }
 });
 
+// PUT /api/orders/:reference/status  — admin only, update fulfilment state
+router.put("/:reference/status", requireAdmin, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const allowed = ["pending", "paid", "fulfilled", "cancelled"];
+    if (!status) return res.status(400).json({ error: "status is required" });
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ error: `status must be one of: ${allowed.join(", ")}` });
+    }
+    const database = await getDb();
+    const order = database.data.orders.find((o) => o.reference === req.params.reference);
+    if (!order) return res.status(404).json({ error: "Order not found" });
+    order.status = status;
+    if (status === "paid" && !order.paidAt) order.paidAt = new Date().toISOString();
+    if (status === "fulfilled" && !order.fulfilledAt) order.fulfilledAt = new Date().toISOString();
+    await database.write();
+    res.json(order);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Used internally by the Paystack route to mark an order paid
 export async function markOrderPaid(reference) {
   const database = await getDb();
