@@ -5,7 +5,7 @@ import AuthModal from "./AuthModal.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
 export default function Header() {
-  const { count, setIsOpen } = useCart();
+  const { count, setIsOpen, wishlistCount } = useCart();
   const { user, logout } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -33,6 +33,9 @@ export default function Header() {
               <a href="/#visit" className="rounded transition-colors hover:text-cream focus-ring">
                 Visit Us
               </a>
+              <Link to="/wishlist" className="rounded transition-colors hover:text-cream focus-ring">
+                Wishlist {wishlistCount > 0 && <span className="ml-1 text-gold">({wishlistCount})</span>}
+              </Link>
             </nav>
 
             <div className="flex items-center gap-2">

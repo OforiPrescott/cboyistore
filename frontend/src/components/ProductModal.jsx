@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { formatGHS } from "../lib/format.js";
+import { useCart } from "../context/CartContext.jsx";
+import { whatsAppProductLink } from "../lib/whatsapp.js";
 
 export default function ProductModal({ product, onClose, onAdd }) {
+  const { addToWishlist, wishlist } = useCart();
   const [added, setAdded] = useState(false);
   const gallery = product.images?.length
     ? product.images
@@ -20,6 +23,7 @@ export default function ProductModal({ product, onClose, onAdd }) {
   const colorOptions = product.variants?.color || null;
   const [storage, setStorage] = useState(storageOptions ? storageOptions[0].value : null);
   const [color, setColor] = useState(colorOptions ? colorOptions[0] : null);
+  const isWishlisted = wishlist.some((w) => w.productId === product.id);
 
   // Effective price follows the selected storage tier (falls back to base price).
   const activeStorage = storageOptions?.find((s) => s.value === storage) || null;
@@ -180,6 +184,26 @@ export default function ProductModal({ product, onClose, onAdd }) {
 
           <div className="mt-6 flex gap-3">
             <button
+              onClick={() => {
+                addToWishlist(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice });
+              }}
+              className={`focus-ring rounded-full border px-4 py-3.5 text-sm font-600 transition-colors ${
+                isWishlisted
+                  ? "border-signal text-signal"
+                  : "border-ink/10 text-ink hover:bg-ink/5"
+              }`}
+            >
+              {isWishlisted ? "💖 Saved" : "🤍 Save"}
+            </button>
+            <a
+              href={whatsAppProductLink(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice })}
+              target="_blank"
+              rel="noreferrer"
+              className="focus-ring rounded-full border border-ink/10 px-5 py-3.5 text-sm font-600 text-ink hover:bg-ink/5"
+            >
+              Ask on WhatsApp
+            </a>
+            <button
               onClick={handleAdd}
               disabled={product.stock === 0}
               className={`focus-ring flex-1 rounded-full py-3.5 text-sm font-600 text-white shadow-lg transition-transform hover:scale-[1.02] ${
@@ -192,20 +216,6 @@ export default function ProductModal({ product, onClose, onAdd }) {
             >
               {product.stock === 0 ? "Out of stock" : added ? "Added to cart ✓" : "Add to cart"}
             </button>
-            <a
-              href={`https://wa.me/233541533365?text=${encodeURIComponent(
-                `Hi Cboyistore, I'm interested in the ${product.name}${
-                  storage ? ` (${storage}` : ""
-                }${color ? `${storage ? ", " : " ("}${color.name})` : storage ? ")" : ""} — ${formatGHS(
-                  effectivePrice
-                )}).`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="focus-ring rounded-full border border-ink/10 px-5 py-3.5 text-sm font-600 text-ink hover:bg-ink/5"
-            >
-              Ask on WhatsApp
-            </a>
           </div>
         </div>
       </div>

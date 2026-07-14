@@ -1,0 +1,20 @@
+{
+  "name": "Cboyistore — Phones, Laptops & Gadgets",
+  "short_name": "Cboyistore",
+  "description": "Premium reseller in phones, laptops, smartwatches, gaming and appliances. Tafo, Kumasi.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFF8F0",
+  "theme_color": "#FF5A36",
+  "categories": ["shopping", "electronics"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

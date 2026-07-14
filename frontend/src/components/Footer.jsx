@@ -53,7 +53,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="bg-ink py-10 text-cream/50">
+    <footer className="bg-ink pb-24 pt-10 text-cream/50 sm:pb-10">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 text-center sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:text-left lg:px-8">
         <p className="font-display text-sm font-700 text-cream/70">
           CB<span className="text-signal">O</span>Y<span className="text-gold">istore</span>
