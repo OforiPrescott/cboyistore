@@ -8,8 +8,7 @@ import WhyUs from "./components/WhyUs.jsx";
 import LocationMap from "./components/LocationMap.jsx";
 import Footer from "./components/Footer.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
-import ChatWidget from "./components/ChatWidget.jsx";
-import ShoppingAssistant from "./components/ShoppingAssistant.jsx";
+import UnifiedChat from "./components/UnifiedChat.jsx";
 import MobileBottomNav from "./components/MobileBottomNav.jsx";
 import PWAInstallPrompt from "./components/PWAInstallPrompt.jsx";
 import CheckoutSuccess from "./pages/CheckoutSuccess.jsx";
@@ -42,8 +41,7 @@ export default function App() {
       </Routes>
       <Footer />
       <CartDrawer />
-      <ChatWidget />
-      <ShoppingAssistant />
+      <UnifiedChat />
       <MobileBottomNav />
       <PWAInstallPrompt />
     </div>

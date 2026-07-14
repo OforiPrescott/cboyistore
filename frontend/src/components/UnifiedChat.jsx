@@ -3,7 +3,15 @@ import { answer, SUGGESTED, WHATSAPP_LINK } from "../lib/chatbot.js";
 import { useCart } from "../context/CartContext.jsx";
 import { fetchProducts } from "../lib/api.js";
 import ProductModal from "./ProductModal.jsx";
-import { PlugIcon, MicIcon, SendIcon, CloseIcon, ChatBubbleIcon } from "../lib/icons.jsx";
+import {
+  PlugIcon,
+  MicIcon,
+  SendIcon,
+  CloseIcon,
+  ChatBubbleIcon,
+  WhatsAppIcon,
+  ShoppingBagIcon,
+} from "../lib/icons.jsx";
 
 function linkify(text) {
   const parts = text.split(/(https?:\/\/[^\s]+)/g);
@@ -25,12 +33,56 @@ function timeGreeting() {
   return "Good evening";
 }
 
-const GREETING = `${timeGreeting()}! I'm Unplug Ur Plug — your Cboyistore shopping assistant. I can show you products, help you add items to cart, or answer questions. Try: "show me iPhones" or "best laptops"`;
+const ASSISTANT_GREETING = `${timeGreeting()}! I'm Unplug Ur Plug — your Cboyistore assistant. Ask me anything about our phones, laptops, trade-in, delivery, warranty or payments.`;
 
-export default function ShoppingAssistant() {
-  const { addItem } = useCart();
+const SHOP_GREETING = `${timeGreeting()}! I'm your shopping assistant — search the catalogue by typing a product, brand or category (e.g. "iPhone 17", "MacBook", "PS5").`;
+
+function ProductCardInline({ product, onAdd }) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([{ from: "bot", text: GREETING }]);
+  return (
+    <>
+      <div
+        onClick={() => setOpen(true)}
+        className="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-cream/80 ring-1 ring-ink/5 transition-colors hover:ring-ink/15"
+      >
+        <img
+          src={product.images?.[0] || product.image}
+          alt={product.name}
+          className="h-20 w-full object-cover"
+        />
+        <div className="p-2">
+          <p className="text-[11px] font-700 text-ink leading-snug line-clamp-1">{product.name}</p>
+          <p className="text-[10px] font-600 text-signal">{product.price ? `${product.price.toLocaleString()} GHS` : ""}</p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd(product);
+            }}
+            className="focus-ring mt-1 w-full rounded-lg bg-ink py-1.5 text-[10px] font-700 text-cream"
+          >
+            Add to cart
+          </button>
+        </div>
+      </div>
+      {open && (
+        <ProductModal
+          product={product}
+          onClose={() => setOpen(false)}
+          onAdd={(variant) => {
+            onAdd(product, variant);
+            setOpen(false);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+export default function UnifiedChat() {
+  const { addItem } = useCart();
+  const [mode, setMode] = useState("assistant"); // "assistant" | "shop"
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([{ from: "bot", text: ASSISTANT_GREETING, mode: "assistant" }]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [listening, setListening] = useState(false);
@@ -46,7 +98,7 @@ export default function ShoppingAssistant() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, typing, open]);
+  }, [messages, typing, open, mode]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -73,38 +125,56 @@ export default function ShoppingAssistant() {
     return () => recognition.stop();
   }, []);
 
+  function switchMode(newMode) {
+    setMode(newMode);
+    const greeting = newMode === "assistant" ? ASSISTANT_GREETING : SHOP_GREETING;
+    setMessages((m) => [...m, { from: "bot", text: greeting, mode: newMode }]);
+  }
+
   function findProducts(query) {
     const q = query.toLowerCase();
     if (!q || catalog.length === 0) return [];
     return catalog.filter((p) => {
       const hay = `${p.name} ${p.brand} ${p.category} ${p.spec || ""}`.toLowerCase();
       const words = q.split(/\s+/).filter(Boolean);
-      return words.every((w) => hay.includes(w));
+      return words.some((w) => hay.includes(w));
     });
   }
 
   function send(text) {
     const q = (text ?? input).trim();
     if (!q) return;
-    setMessages((m) => [...m, { from: "user", text: q }]);
+    setMessages((m) => [...m, { from: "user", text: q, mode }]);
     setInput("");
     setTyping(true);
 
     setTimeout(() => {
-      const products = findProducts(q);
-      if (products.length > 0) {
-        const names = products.slice(0, 4).map((p) => p.name).join(", ");
-        setMessages((m) => [
-          ...m,
-          {
-            from: "bot",
-            text: `Found ${products.length} product${products.length > 1 ? "s" : ""} for "${q}": ${names}. Tap a button below to add to cart, or say "show more" for the full list.`,
-            products: products.slice(0, 4),
-          },
-        ]);
+      if (mode === "shop") {
+        const products = findProducts(q);
+        if (products.length > 0) {
+          const names = products.slice(0, 4).map((p) => p.name).join(", ");
+          setMessages((m) => [
+            ...m,
+            {
+              from: "bot",
+              text: `Found ${products.length} result${products.length > 1 ? "s" : ""} for "${q}": ${names}. Tap Add to cart directly, or say "show more" for the full list.`,
+              mode: "shop",
+              products: products.slice(0, 4),
+            },
+          ]);
+        } else {
+          setMessages((m) => [
+            ...m,
+            {
+              from: "bot",
+              text: `No products matched "${q}". Try a different keyword like "iPhone", "Samsung", "MacBook", "PS5" or "watch".`,
+              mode: "shop",
+            },
+          ]);
+        }
       } else {
         const reply = answer(q);
-        setMessages((m) => [...m, { from: "bot", text: reply }]);
+        setMessages((m) => [...m, { from: "bot", text: reply, mode: "assistant" }]);
       }
       setTyping(false);
     }, 500);
@@ -117,18 +187,22 @@ export default function ShoppingAssistant() {
           onClick={() => setOpen(true)}
           className="focus-ring fixed bottom-6 right-6 z-[70] flex items-center gap-2 rounded-full bg-signal-gradient px-5 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105"
         >
-          <PlugIcon className="h-5 w-5" /> Shop assistant
+          <ChatBubbleIcon className="h-5 w-5" /> Chat with us
         </button>
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 z-[70] flex h-[38rem] w-[24rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-ink/10">
+        <div className="fixed inset-x-0 bottom-0 z-[70] flex max-h-[92vh] flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-ink/10 sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-[24rem] sm:rounded-3xl sm:border sm:border-ink/10">
           <div className="flex items-center justify-between bg-ink px-4 py-3 text-cream">
             <div className="flex items-center gap-2">
-              <PlugIcon className="h-5 w-5 text-gold" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal/20 text-gold">
+                <PlugIcon className="h-4 w-4" />
+              </span>
               <div>
                 <p className="font-display text-sm font-700 leading-tight">Unplug Ur Plug</p>
-                <p className="text-[11px] text-cream/60">Shopping assistant · browse & add to cart</p>
+                <p className="text-[11px] text-cream/60">
+                  {mode === "shop" ? "Shopping assistant · browse & add to cart" : "Support · FAQs & order help"}
+                </p>
               </div>
             </div>
             <button
@@ -140,27 +214,54 @@ export default function ShoppingAssistant() {
             </button>
           </div>
 
+          <div className="flex items-center gap-1 border-b border-ink/10 bg-cream/40 px-2 py-1.5">
+            <button
+              onClick={() => mode !== "assistant" && switchMode("assistant")}
+              className={`focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-600 transition-colors ${
+                mode === "assistant"
+                  ? "bg-white text-ink shadow-sm ring-1 ring-ink/10"
+                  : "text-ink/50 hover:text-ink"
+              }`}
+            >
+              <ChatBubbleIcon className="h-3.5 w-3.5" />
+              Assistant
+            </button>
+            <button
+              onClick={() => mode !== "shop" && switchMode("shop")}
+              className={`focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-600 transition-colors ${
+                mode === "shop"
+                  ? "bg-white text-ink shadow-sm ring-1 ring-ink/10"
+                  : "text-ink/50 hover:text-ink"
+              }`}
+            >
+              <ShoppingBagIcon className="h-3.5 w-3.5" />
+              Shop
+            </button>
+          </div>
+
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-cream/40 p-4">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm ${
-                    m.from === "user"
-                      ? "bg-signal-gradient text-white"
-                      : "bg-white text-ink ring-1 ring-ink/5"
-                  }`}
-                >
-                  {linkify(m.text)}
-                  {m.products && m.products.length > 0 && (
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      {m.products.map((p) => (
-                        <ProductCardInline key={p.id} product={p} onAdd={(variant) => addItem(p, variant)} />
-                      ))}
-                    </div>
-                  )}
+            {messages
+              .filter((m) => !m.mode || m.mode === mode)
+              .map((m, i) => (
+                <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm ${
+                      m.from === "user"
+                        ? "bg-signal-gradient text-white"
+                        : "bg-white text-ink ring-1 ring-ink/5"
+                    }`}
+                  >
+                    {linkify(m.text)}
+                    {m.products && m.products.length > 0 && (
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {m.products.map((p) => (
+                          <ProductCardInline key={p.id} product={p} onAdd={(variant) => addItem(p, variant)} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
             {typing && (
               <div className="flex justify-start">
@@ -171,7 +272,7 @@ export default function ShoppingAssistant() {
             )}
 
             <div className="flex flex-wrap gap-2 pt-1">
-              {SUGGESTED.slice(0, 5).map((q) => (
+              {(mode === "assistant" ? SUGGESTED : SUGGESTED.slice(0, 5)).map((q) => (
                 <button
                   key={q}
                   onClick={() => send(q)}
@@ -193,7 +294,7 @@ export default function ShoppingAssistant() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Try 'show me iPhones'…"
+              placeholder={mode === "shop" ? "Try 'iPhone 17' or 'PS5'…" : "Ask Unplug Ur Plug…"}
               className="focus-ring flex-1 rounded-full border border-ink/10 px-4 py-2.5 text-sm"
             />
             <button
@@ -233,27 +334,5 @@ export default function ShoppingAssistant() {
         </div>
       )}
     </>
-  );
-}
-
-function ProductCardInline({ product, onAdd }) {
-  return (
-    <div className="flex flex-col overflow-hidden rounded-xl bg-cream/60 ring-1 ring-ink/5">
-      <img
-        src={product.images?.[0] || product.image}
-        alt={product.name}
-        className="h-20 w-full object-cover"
-      />
-      <div className="p-2">
-        <p className="text-[11px] font-700 text-ink leading-snug line-clamp-1">{product.name}</p>
-        <p className="text-[10px] font-600 text-signal">{product.price ? `${product.price.toLocaleString()} GHS` : ""}</p>
-        <button
-          onClick={() => onAdd(product)}
-          className="focus-ring mt-1 w-full rounded-lg bg-ink py-1.5 text-[10px] font-700 text-cream"
-        >
-          Add to cart
-        </button>
-      </div>
-    </div>
   );
 }
