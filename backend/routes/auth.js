@@ -171,6 +171,21 @@ router.get("/me", requireAuth, async (req, res, next) => {
   }
 });
 
+router.delete("/me", requireAuth, async (req, res, next) => {
+  try {
+    const database = await getDb();
+    const index = database.data.users.findIndex((u) => u.id === req.user.sub);
+    if (index === -1) return res.status(404).json({ error: "User not found" });
+
+    database.data.users.splice(index, 1);
+    await database.write();
+
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/customers", async (req, res, next) => {
   try {
     const authUser = await getUserFromRequest(req);
@@ -183,6 +198,31 @@ router.get("/customers", async (req, res, next) => {
       .slice()
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json(users.map(sanitizeUser));
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/customers/:id", async (req, res, next) => {
+  try {
+    const database = await getDb();
+    const targetId = req.params.id;
+
+    const authUser = await getUserFromRequest(req);
+    const adminAuthorized = authUser?.role === "admin" || isAdminKey(req);
+    const isSelf = authUser?.id === targetId;
+
+    if (!adminAuthorized && !isSelf) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const index = database.data.users.findIndex((u) => u.id === targetId);
+    if (index === -1) return res.status(404).json({ error: "Customer not found" });
+
+    database.data.users.splice(index, 1);
+    await database.write();
+
+    res.status(204).end();
   } catch (err) {
     next(err);
   }

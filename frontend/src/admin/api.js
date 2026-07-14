@@ -86,6 +86,14 @@ export async function apiFetchCustomers(adminKey) {
   return handle(res);
 }
 
+export async function apiDeleteCustomer(adminKey, id) {
+  const res = await fetch(`${BASE}/auth/customers/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(adminKey, false),
+  });
+  return handle(res);
+}
+
 export async function apiUpdateOrderStatus(adminKey, reference, status) {
   const res = await fetch(`${BASE}/orders/${reference}/status`, {
     method: "PUT",

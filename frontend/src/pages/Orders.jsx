@@ -1,24 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { fetchMyOrders } from "../lib/api.js";
+import { fetchMyOrders, apiDeleteMyAccount } from "../lib/api.js";
 import { formatGHS } from "../lib/format.js";
 
 export default function OrdersPage() {
-  const { user, token } = useAuth();
+  const { user, token, logout } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
+  async function load() {
     if (!token) {
       setLoading(false);
       return;
     }
-    fetchMyOrders(token)
-      .then((data) => setOrders(data))
-      .catch(() => setOrders([]))
-      .finally(() => setLoading(false));
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchMyOrders(token);
+      setOrders(data);
+    } catch {
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  async function handleDeleteAccount() {
+    if (confirmText !== "DELETE") return;
+    setDeleting(true);
+    setError("");
+    try {
+      await apiDeleteMyAccount(token);
+      logout();
+    } catch (err) {
+      setError(err.message || "Failed to delete account. Please try again.");
+      setDeleting(false);
+    }
+  }
 
   if (!user) {
     return (
@@ -71,6 +98,32 @@ export default function OrdersPage() {
           ))}
         </div>
       )}
+
+      <div className="mt-12 rounded-3xl border border-signal/20 bg-white p-6 shadow-sm">
+        <h2 className="font-display text-lg font-700 text-ink">Danger zone</h2>
+        <p className="mt-1 text-sm text-ink/50">
+          Deleting your account is permanent. All your orders, trade-in requests and personal data will be removed.
+        </p>
+        {error && <p className="mt-3 text-sm text-signal">{error}</p>}
+        <div className="mt-4">
+          <label className="block text-xs font-600 text-ink/50">
+            Type <span className="font-700 text-ink">DELETE</span> to confirm
+          </label>
+          <input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="DELETE"
+            className="focus-ring mt-1.5 w-full rounded-xl border border-ink/10 bg-white px-4 py-2.5 text-sm"
+          />
+          <button
+            onClick={handleDeleteAccount}
+            disabled={deleting || confirmText !== "DELETE"}
+            className="focus-ring mt-3 rounded-full bg-signal px-5 py-2.5 text-sm font-600 text-white shadow-lg shadow-signal/30 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {deleting ? "Deleting…" : "Permanently delete my account"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

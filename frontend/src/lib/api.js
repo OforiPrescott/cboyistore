@@ -78,6 +78,14 @@ export async function apiMe(token) {
   return handle(res);
 }
 
+export async function apiDeleteMyAccount(token) {
+  const res = await fetch(`${BASE}/auth/me`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handle(res);
+}
+
 export async function estimateTradein({ deviceId, condition }) {
   const res = await fetch(`${BASE}/tradein/estimate`, {
     method: "POST",

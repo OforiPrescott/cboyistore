@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Badge, EmptyState, Input, Spinner } from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
 import { formatGHS } from "../../lib/format.js";
-import { apiFetchCustomers } from "../api.js";
+import { apiFetchCustomers, apiDeleteCustomer } from "../api.js";
 
 export default function CustomersPage() {
-  const { adminKey, notify, logout } = useAdmin();
+  const { adminKey, notify, confirm } = useAdmin();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -18,7 +19,6 @@ export default function CustomersPage() {
     } catch (err) {
       if (err.status === 401 || err.status === 403) {
         notify("Admin access denied. Please sign in again.", "error");
-        logout();
       } else {
         notify(err.message || "Failed to load customers", "error");
       }
@@ -41,6 +41,27 @@ export default function CustomersPage() {
       (customer.phone || "").toLowerCase().includes(q)
     );
   });
+
+  async function handleDelete(customer) {
+    const ok = await confirm({
+      title: "Delete customer?",
+      message: `This will permanently remove ${customer.name} (${customer.email}) and all their associated data. This action cannot be undone.`,
+      confirmLabel: "Delete",
+      tone: "danger",
+    });
+    if (!ok) return;
+
+    setDeletingId(customer.id);
+    try {
+      await apiDeleteCustomer(adminKey, customer.id);
+      setCustomers((prev) => prev.filter((c) => c.id !== customer.id));
+      notify("Customer removed", "success");
+    } catch (err) {
+      notify(err.message || "Failed to delete customer", "error");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
@@ -83,6 +104,7 @@ export default function CustomersPage() {
                 <th className="px-4 py-3">Location</th>
                 <th className="px-4 py-3">Joined</th>
                 <th className="px-4 py-3">Last login</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink/5">
@@ -94,6 +116,15 @@ export default function CustomersPage() {
                   <td className="px-4 py-3 text-ink/60">{customer.location || "—"}</td>
                   <td className="px-4 py-3 text-ink/60">{new Date(customer.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-ink/60">{customer.lastLoginAt ? new Date(customer.lastLoginAt).toLocaleDateString() : "Never"}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => handleDelete(customer)}
+                      disabled={deletingId === customer.id}
+                      className="focus-ring rounded-full border border-signal/20 px-3 py-1.5 text-xs font-600 text-signal transition hover:bg-signal hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {deletingId === customer.id ? "Removing…" : "Remove"}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
