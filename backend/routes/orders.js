@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { buildWhatsappLink, notifyShopBySms } from "../services/notifications.js";
 import { requireAdmin } from "../middleware/adminAuth.js";
+import { getUserFromRequest } from "./auth.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const file = path.join(__dirname, "..", "data", "orders.json");
@@ -27,7 +28,20 @@ router.post("/", async (req, res, next) => {
     if (!items || !items.length) {
       return res.status(400).json({ error: "Cart is empty" });
     }
-    if (!customer?.name || !customer?.phone) {
+
+    const authUser = await getUserFromRequest(req);
+    const buyer = authUser
+      ? {
+          name: authUser.name,
+          email: authUser.email,
+          phone: authUser.phone,
+          location: authUser.location,
+          accountId: authUser.id,
+          accountCreatedAt: authUser.createdAt,
+        }
+      : customer;
+
+    if (!buyer?.name || !buyer?.phone) {
       return res.status(400).json({ error: "Customer name and phone are required" });
     }
 
@@ -36,10 +50,12 @@ router.post("/", async (req, res, next) => {
       id: nanoid(10),
       reference: `CBOY-${nanoid(8).toUpperCase()}`,
       items,
-      customer, // { name, phone, email, address, deliveryMethod, city }
+      customer: buyer,
       total,
       status: "pending",
       createdAt: new Date().toISOString(),
+      userId: authUser?.id || null,
+      userEmail: authUser?.email || null,
     };
 
     const database = await getDb();

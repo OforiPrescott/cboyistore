@@ -70,6 +70,11 @@ export async function apiFetchOrders(adminKey) {
   return handle(res);
 }
 
+export async function apiFetchCustomers(adminKey) {
+  const res = await fetch(`${BASE}/auth/customers`, { headers: authHeaders(adminKey, false) });
+  return handle(res);
+}
+
 export async function apiUpdateOrderStatus(adminKey, reference, status) {
   const res = await fetch(`${BASE}/orders/${reference}/status`, {
     method: "PUT",

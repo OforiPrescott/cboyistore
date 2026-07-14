@@ -33,6 +33,11 @@ const nav = [
     icon: <Icon path={<><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16l3-4 3 3 4-6" /></>} />,
   },
   {
+    to: "/customers",
+    label: "Customers",
+    icon: <Icon path={<><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm6 8v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1" /><path d="M3 19h18" /></>} />,
+  },
+  {
     to: "/trade-in",
     label: "Trade-in",
     icon: <Icon path={<><path d="M4 7h13l-3-3M20 17H7l3 3" /></>} />,

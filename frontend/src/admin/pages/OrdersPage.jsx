@@ -22,6 +22,7 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [accountFilter, setAccountFilter] = useState("all");
   const [selected, setSelected] = useState(null);
   const [updating, setUpdating] = useState(false);
 
@@ -51,14 +52,22 @@ export default function OrdersPage() {
     const q = query.trim().toLowerCase();
     return orders.filter((o) => {
       const matchStatus = statusFilter === "all" ? true : o.status === statusFilter;
+      const linked = Boolean(o.userId);
+      const matchAccount =
+        accountFilter === "all"
+          ? true
+          : accountFilter === "linked"
+          ? linked
+          : !linked;
       const matchQuery = q
         ? o.reference.toLowerCase().includes(q) ||
           (o.customer?.name || "").toLowerCase().includes(q) ||
-          (o.customer?.phone || "").toLowerCase().includes(q)
+          (o.customer?.phone || "").toLowerCase().includes(q) ||
+          (o.customer?.email || "").toLowerCase().includes(q)
         : true;
-      return matchStatus && matchQuery;
+      return matchStatus && matchAccount && matchQuery;
     });
-  }, [orders, query, statusFilter]);
+  }, [orders, query, statusFilter, accountFilter]);
 
   async function changeStatus(order, status) {
     setUpdating(true);
@@ -150,8 +159,18 @@ export default function OrdersPage() {
                 >
                   <td className="px-4 py-3 font-600 text-ink">{o.reference}</td>
                   <td className="px-4 py-3">
-                    {o.customer?.name}
-                    <p className="text-xs text-ink/40">{o.customer?.phone}</p>
+                    <div className="flex items-center gap-2">
+                      <span>{o.customer?.name || "Guest"}</span>
+                      {o.userId ? (
+                        <Badge tone="green">Account</Badge>
+                      ) : (
+                        <Badge tone="neutral">Guest</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-ink/40">{o.customer?.phone || "—"}</p>
+                    {o.customer?.email ? (
+                      <p className="text-xs text-ink/40">{o.customer.email}</p>
+                    ) : null}
                   </td>
                   <td className="px-4 py-3 text-ink/60">{o.items?.length || 0}</td>
                   <td className="px-4 py-3 font-600">{formatGHS(o.total)}</td>

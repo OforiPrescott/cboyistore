@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import { formatGHS } from "../lib/format.js";
 import { createOrder, verifyPayment } from "../lib/api.js";
 
@@ -7,10 +8,11 @@ const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
 export default function Checkout({ onClose }) {
   const { items, total, clearCart } = useCart();
+  const { user, token } = useAuth();
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
+    name: user?.name || "",
+    phone: user?.phone || "",
+    email: user?.email || "",
     address: "",
     deliveryMethod: "delivery",
   });
@@ -39,6 +41,7 @@ export default function Checkout({ onClose }) {
           color: i.color ? i.color.name : undefined,
         })),
         customer: form,
+        token,
       });
       setReference(order.reference);
       setWhatsappLink(order.whatsappLink);
@@ -134,6 +137,12 @@ export default function Checkout({ onClose }) {
               </div>
             </div>
 
+            {user ? (
+              <div className="rounded-3xl border border-ink/10 bg-cream p-4 text-sm text-ink/80">
+                Signed in as <span className="font-semibold text-ink">{user.email}</span>
+                {user.phone ? ` · ${user.phone}` : ""}
+              </div>
+            ) : null}
             <form onSubmit={handlePay} className="mt-5 flex flex-col gap-3">
               <input
                 required

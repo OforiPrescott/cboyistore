@@ -13,6 +13,7 @@ import ordersRouter from "./routes/orders.js";
 import paystackRouter from "./routes/paystack.js";
 import tradeinRouter from "./routes/tradein.js";
 import uploadRouter from "./routes/upload.js";
+import authRouter from "./routes/auth.js";
 
 dotenv.config();
 
@@ -59,7 +60,7 @@ app.use(
 );
 // Paystack sends raw JSON to the webhook — keep body parsing after that route
 // registers its own raw parser if you add signature verification later.
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 // Serve uploaded product media (populated by POST /api/upload).
 app.use("/api/uploads", express.static(uploadDir, { maxAge: "7d" }));
@@ -73,6 +74,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/paystack", paystackRouter);

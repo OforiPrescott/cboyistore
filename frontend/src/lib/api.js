@@ -16,10 +16,12 @@ export async function fetchProducts({ category, q } = {}) {
   return handle(res);
 }
 
-export async function createOrder({ items, customer }) {
+export async function createOrder({ items, customer, token } = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${BASE}/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ items, customer }),
   });
   return handle(res);
@@ -41,6 +43,31 @@ export async function verifyPayment(reference) {
 
 export async function fetchTradeinDevices() {
   const res = await fetch(`${BASE}/tradein/devices`);
+  return handle(res);
+}
+
+export async function apiRegister(payload) {
+  const res = await fetch(`${BASE}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function apiLogin(payload) {
+  const res = await fetch(`${BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function apiMe(token) {
+  const res = await fetch(`${BASE}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return handle(res);
 }
 

@@ -71,6 +71,16 @@ export default function DashboardPage() {
 
   const paidOrders = orders.filter((o) => o.status === "paid" || o.status === "fulfilled");
   const revenue = paidOrders.reduce((s, o) => s + o.total, 0);
+  const linkedOrders = orders.filter((o) => Boolean(o.userId));
+  const linkedRevenue = linkedOrders
+    .filter((o) => o.status === "paid" || o.status === "fulfilled")
+    .reduce((sum, o) => sum + o.total, 0);
+  const linkedAccounts = useMemo(
+    () => new Set(linkedOrders.map((o) => o.userId)).size,
+    [linkedOrders]
+  );
+  const orderRate = orders.length ? Math.round((linkedOrders.length / orders.length) * 100) : 0;
+  const activeCustomers = linkedAccounts;
   const pending = orders.filter((o) => o.status === "pending").length;
   const lowStock = products.filter((p) => typeof p.stock === "number" && p.stock <= 5);
   const outOfStock = products.filter((p) => p.stock === 0);
@@ -119,7 +129,7 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
         <ModernStat
           label="Paid revenue"
           value={formatGHS(revenue)}
@@ -127,12 +137,44 @@ export default function DashboardPage() {
           tone="signal"
           spark={revenueSpark}
         />
-        <ModernStat label="Products" value={products.length} sub={`${outOfStock.length} out of stock`} tone="violet" />
+        <ModernStat
+          label="Account-linked orders"
+          value={linkedOrders.length}
+          sub={`${linkedAccounts} linked accounts`}
+          tone="violet"
+        />
+        <ModernStat
+          label="Customer order rate"
+          value={`${orderRate}%`}
+          sub="Signed-in order share"
+          tone="gold"
+        />
         <ModernStat label="Pending orders" value={pending} sub="awaiting payment" tone="gold" />
         <ModernStat label="Low stock" value={lowStock.length} sub="≤ 5 units left" tone="neutral" />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Card>
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-700 text-ink">Customer order report</h2>
+            <Link to="/customers" className="text-xs font-600 text-violet hover:underline">
+              View customers
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-3xl border border-ink/10 bg-cream p-5">
+              <p className="text-xs font-600 uppercase tracking-wide text-ink/40">Linked revenue</p>
+              <p className="mt-2 text-2xl font-700 text-ink">{formatGHS(linkedRevenue)}</p>
+              <p className="mt-1 text-xs text-ink/50">Paid revenue from account-linked orders</p>
+            </div>
+            <div className="rounded-3xl border border-ink/10 bg-cream p-5">
+              <p className="text-xs font-600 uppercase tracking-wide text-ink/40">Active customers</p>
+              <p className="mt-2 text-2xl font-700 text-ink">{activeCustomers}</p>
+              <p className="mt-1 text-xs text-ink/50">Customers who placed at least one order</p>
+            </div>
+          </div>
+        </Card>
+
         <Card>
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-700 text-ink">Recent orders</h2>
@@ -149,7 +191,7 @@ export default function DashboardPage() {
                   <button onClick={() => navigate("/orders")} className="text-left">
                     <p className="text-sm font-600 text-ink">{o.reference}</p>
                     <p className="text-xs text-ink/40">
-                      {o.customer.name} &middot; {formatGHS(o.total)}
+                      {(o.customer?.name || "Guest")} &middot; {formatGHS(o.total)}
                     </p>
                   </button>
                   <Badge tone={o.status === "paid" || o.status === "fulfilled" ? "gold" : o.status === "pending" ? "neutral" : "violet"}>

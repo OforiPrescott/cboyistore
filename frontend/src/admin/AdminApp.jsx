@@ -7,6 +7,7 @@ import DashboardPage from "./pages/DashboardPage.jsx";
 import ProductsPage from "./pages/ProductsPage.jsx";
 import OrdersPage from "./pages/OrdersPage.jsx";
 import AnalyticsPage from "./pages/AnalyticsPage.jsx";
+import CustomersPage from "./pages/CustomersPage.jsx";
 import TradeInPage from "./pages/TradeInPage.jsx";
 
 function Shell() {
@@ -44,6 +45,7 @@ function Shell() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/customers" element={<CustomersPage />} />
               <Route path="/trade-in" element={<TradeInPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
