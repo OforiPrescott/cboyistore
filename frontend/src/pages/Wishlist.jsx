@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 import { formatGHS } from "../lib/format.js";
+import { HeartIcon } from "../lib/icons.jsx";
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, moveToCart } = useCart();
@@ -15,7 +16,9 @@ export default function WishlistPage() {
 
       {wishlist.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 rounded-3xl bg-white p-16 text-center ring-1 ring-ink/5">
-          <span className="text-5xl">💖</span>
+          <span className="flex h-20 w-20 items-center justify-center rounded-full bg-cream text-signal">
+            <HeartIcon className="h-10 w-10" />
+          </span>
           <p className="font-display text-xl font-700 text-ink">No saved items yet</p>
           <p className="text-sm text-ink/50">Tap the heart on any product to save it here.</p>
           <Link

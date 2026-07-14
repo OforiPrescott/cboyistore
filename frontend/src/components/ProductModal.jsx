@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { formatGHS } from "../lib/format.js";
 import { useCart } from "../context/CartContext.jsx";
 import { whatsAppProductLink } from "../lib/whatsapp.js";
+import { HeartIcon, WhatsAppIcon } from "../lib/icons.jsx";
 
 export default function ProductModal({ product, onClose, onAdd }) {
   const { addToWishlist, wishlist } = useCart();
@@ -187,21 +188,22 @@ export default function ProductModal({ product, onClose, onAdd }) {
               onClick={() => {
                 addToWishlist(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice });
               }}
-              className={`focus-ring rounded-full border px-4 py-3.5 text-sm font-600 transition-colors ${
+              className={`focus-ring inline-flex items-center gap-2 rounded-full border px-4 py-3.5 text-sm font-600 transition-colors ${
                 isWishlisted
                   ? "border-signal text-signal"
                   : "border-ink/10 text-ink hover:bg-ink/5"
               }`}
             >
-              {isWishlisted ? "💖 Saved" : "🤍 Save"}
+              <HeartIcon className="h-4 w-4" filled={isWishlisted} />
+              {isWishlisted ? "Saved" : "Save"}
             </button>
             <a
               href={whatsAppProductLink(product, { storage: storage || undefined, color: color || undefined, price: effectivePrice })}
               target="_blank"
               rel="noreferrer"
-              className="focus-ring rounded-full border border-ink/10 px-5 py-3.5 text-sm font-600 text-ink hover:bg-ink/5"
+              className="focus-ring inline-flex items-center gap-2 rounded-full border border-ink/10 px-5 py-3.5 text-sm font-600 text-ink hover:bg-ink/5"
             >
-              Ask on WhatsApp
+              <WhatsAppIcon className="h-4 w-4 text-emerald-600" /> Ask on WhatsApp
             </a>
             <button
               onClick={handleAdd}

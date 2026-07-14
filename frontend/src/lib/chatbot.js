@@ -121,7 +121,7 @@ const INTENTS = [
   {
     id: "thanks",
     keywords: ["thank", "thanks", "appreciate", "cheers", "nice"],
-    reply: "Anytime! Plug in anytime you need help. 🔌",
+    reply: "Anytime! Reach out anytime you need help.",
   },
 ];
 

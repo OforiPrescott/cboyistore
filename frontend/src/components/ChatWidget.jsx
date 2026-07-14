@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { answer, SUGGESTED, WHATSAPP_LINK } from "../lib/chatbot.js";
+import { PlugIcon, MicIcon, SendIcon, CloseIcon, ChatBubbleIcon } from "../lib/icons.jsx";
 
 function linkify(text) {
   const parts = text.split(/(https?:\/\/[^\s]+)/g);
@@ -27,7 +28,7 @@ function timeGreeting() {
   return "Good evening";
 }
 
-const GREETING = `🔌 ${timeGreeting()}! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me anything about our phones, laptops, trade-in or delivery — or tap a question below.`;
+const GREETING = `${timeGreeting()}! I'm Unplug Ur Plug, your Cboyistore assistant. Ask me anything about our phones, laptops, trade-in or delivery — or tap a question below.`;
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -90,7 +91,7 @@ export default function ChatWidget() {
           onClick={() => setOpen(true)}
           className="focus-ring fixed bottom-6 right-6 z-[70] flex items-center gap-2 rounded-full bg-signal-gradient px-5 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105"
         >
-          <span className="text-lg">🔌</span> Plug me
+          <PlugIcon className="h-5 w-5" /> Plug me
         </button>
       )}
 
@@ -98,7 +99,7 @@ export default function ChatWidget() {
         <div className="fixed bottom-6 right-6 z-[70] flex h-[32rem] w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-ink/10">
           <div className="flex items-center justify-between bg-ink px-4 py-3 text-cream">
             <div className="flex items-center gap-2">
-              <span className="text-xl">🔌</span>
+              <PlugIcon className="h-5 w-5 text-gold" />
               <div>
                 <p className="font-display text-sm font-700 leading-tight">Unplug Ur Plug</p>
                 <p className="text-[11px] text-cream/60">Cboyistore assistant</p>
@@ -109,7 +110,7 @@ export default function ChatWidget() {
               aria-label="Close chat"
               className="focus-ring rounded-full p-1.5 text-cream/70 hover:bg-cream/10 hover:text-cream"
             >
-              ✕
+              <CloseIcon className="h-4 w-4" />
             </button>
           </div>
 
@@ -177,14 +178,14 @@ export default function ChatWidget() {
               aria-label="Voice input"
               className={`focus-ring rounded-full px-3 py-2.5 text-sm font-600 ${listening ? "bg-gold text-ink" : "bg-cream text-ink/70"}`}
             >
-              🎤
+              <MicIcon className="h-4 w-4" />
             </button>
             <button
               type="submit"
               aria-label="Send"
               className="focus-ring rounded-full bg-signal-gradient px-4 py-2.5 text-sm font-600 text-white"
             >
-              ➤
+              <SendIcon className="h-4 w-4" />
             </button>
           </form>
 
@@ -192,9 +193,9 @@ export default function ChatWidget() {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="block bg-cream/60 py-2 text-center text-[11px] text-ink/50 hover:text-ink"
+            className="flex items-center justify-center gap-1.5 bg-cream/60 py-2 text-center text-[11px] text-ink/50 hover:text-ink"
           >
-            Still stuck? Chat with us on WhatsApp 💬
+            <WhatsAppIcon className="h-3.5 w-3.5 text-emerald-600" /> Still stuck? Chat with us on WhatsApp
           </a>
         </div>
       )}
