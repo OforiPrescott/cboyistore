@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { HeadsetIcon, ChatBubbleIcon, CloseIcon } from "../lib/icons.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-const DELAY_MS = 8000;
-const VISIBLE_DURATION = 8000;
-const CYCLE_MS = 10 * 60 * 1000;
+const DELAY_MS = 5000; // first notification after 5 seconds
+const VISIBLE_DURATION = 10 * 60 * 1000; // stay visible for 10 minutes
+const CYCLE_MS = 10 * 60 * 1000; // repeat every 10 minutes
 
 export default function ProactiveChat() {
   const { isOpen: cartOpen } = useCart();
