@@ -297,13 +297,19 @@ export default function OrdersPage() {
               <ul className="mt-2 divide-y divide-ink/5 rounded-2xl bg-white ring-1 ring-ink/5">
                 {selected.items?.map((it, i) => (
                   <li key={i} className="flex items-center justify-between px-4 py-3 text-sm">
-                    <div>
-                      <p className="font-600 text-ink">{it.name}</p>
-                      <p className="text-xs text-ink/40">
-                        {formatGHS(it.price)} × {it.qty}
-                        {it.variant ? ` · ${it.variant}` : ""}
-                      </p>
-                    </div>
+                     <div>
+                       <p className="font-600 text-ink">{it.name}</p>
+                       <p className="text-xs text-ink/40">
+                         {formatGHS(it.price)} × {it.qty}
+                         {it.storage ? ` · ${it.storage}` : ""}
+                         {it.color ? ` · ${it.color}` : ""}
+                         {it.colorHex ? (
+                           <span className="ml-1 inline-flex items-center gap-1">
+                             <span className="h-3 w-3 rounded-full border border-ink/10" style={{ backgroundColor: it.colorHex }} />
+                           </span>
+                         ) : null}
+                       </p>
+                     </div>
                     <p className="font-600 text-ink">{formatGHS(it.price * it.qty)}</p>
                   </li>
                 ))}

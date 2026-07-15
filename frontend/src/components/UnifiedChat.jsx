@@ -197,6 +197,7 @@ export default function UnifiedChat() {
     <>
       {showChat && !open && (
         <button
+          data-chat-fab="true"
           onClick={() => setOpen(true)}
           className="focus-ring fixed right-4 z-[70] flex items-center gap-2 rounded-full bg-signal-gradient px-5 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105 bottom-[calc(5rem+env(safe-area-inset-bottom))] sm:right-6 md:bottom-6"
         >

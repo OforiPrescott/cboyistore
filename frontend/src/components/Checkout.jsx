@@ -3,12 +3,14 @@ import { useCart } from "../context/CartContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { formatGHS } from "../lib/format.js";
 import { createOrder, verifyPayment } from "../lib/api.js";
+import AuthModal from "./AuthModal.jsx";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
 export default function Checkout({ onClose }) {
   const { items, total, clearCart } = useCart();
-  const { user, token } = useAuth();
+  const { user, token, loading } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
   const [form, setForm] = useState({
     name: user?.name || "",
     phone: user?.phone || "",
@@ -21,11 +23,26 @@ export default function Checkout({ onClose }) {
   const [whatsappLink, setWhatsappLink] = useState(null);
   const [reference, setReference] = useState(null);
 
+  useEffect(() => {
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        name: user.name || f.name,
+        phone: user.phone || f.phone,
+        email: user.email || f.email,
+      }));
+    }
+  }, [user]);
+
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
   async function handlePay(e) {
+    if (!user) {
+      setShowAuth(true);
+      return;
+    }
     e.preventDefault();
     setStatus("processing");
     setErrorMsg("");
@@ -39,6 +56,7 @@ export default function Checkout({ onClose }) {
           qty: i.qty,
           storage: i.storage || undefined,
           color: i.color ? i.color.name : undefined,
+          colorHex: i.color ? i.color.hex : undefined,
         })),
         customer: form,
         token,
@@ -98,6 +116,11 @@ export default function Checkout({ onClose }) {
         onClick={onClose}
       />
       <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+        {!user && !loading && status !== "success" && (
+          <div className="mb-4 rounded-xl bg-gold/10 p-3 text-sm text-ink/80">
+            Please sign in or create an account to complete your order. This helps us track your purchases and send you updates.
+          </div>
+        )}
         {status === "success" ? (
           <div className="py-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/20 text-2xl">
@@ -228,8 +251,20 @@ export default function Checkout({ onClose }) {
               <p className="text-center text-[11px] text-ink/40">
                 Secured by Paystack. We never see or store your card details.
               </p>
+              {!user && (
+                <button
+                  type="button"
+                  onClick={() => setShowAuth(true)}
+                  className="focus-ring mt-3 w-full rounded-full border border-ink/10 bg-ink/5 py-3 text-sm font-600 text-ink hover:bg-ink/10"
+                >
+                  Sign in or create account to checkout
+                </button>
+              )}
             </form>
           </>
+        )}
+        {showAuth && (
+          <AuthModal onClose={() => setShowAuth(false)} />
         )}
       </div>
     </div>

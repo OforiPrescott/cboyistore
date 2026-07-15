@@ -5,6 +5,7 @@ import { JSONFile } from "lowdb/node";
 import path from "path";
 import { fileURLToPath } from "url";
 import { buildWhatsappLink, notifyShopBySms } from "../services/notifications.js";
+import { sendOrderConfirmationEmail } from "../services/email.js";
 import { requireAdmin } from "../middleware/adminAuth.js";
 import { getUserFromRequest } from "./auth.js";
 import { logAudit, actorFromReq } from "../services/audit.js";
@@ -67,6 +68,7 @@ router.post("/", async (req, res, next) => {
     logAudit({ ...actor, action: "order.created", target: order.reference, targetType: "order", details: `Order ${order.reference} created (${formatGHS(order.total)})` }).catch(() => {});
 
     notifyShopBySms(order).catch(() => {});
+    sendOrderConfirmationEmail(order).catch(() => {});
 
     res.status(201).json({ ...order, whatsappLink: buildWhatsappLink(order) });
   } catch (err) {

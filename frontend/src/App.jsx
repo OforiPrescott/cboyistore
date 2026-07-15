@@ -9,6 +9,7 @@ import LocationMap from "./components/LocationMap.jsx";
 import Footer from "./components/Footer.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
 import UnifiedChat from "./components/UnifiedChat.jsx";
+import ProactiveChat from "./components/ProactiveChat.jsx";
 import MobileBottomNav from "./components/MobileBottomNav.jsx";
 import PWAInstallPrompt from "./components/PWAInstallPrompt.jsx";
 import CheckoutSuccess from "./pages/CheckoutSuccess.jsx";
@@ -42,6 +43,7 @@ export default function App() {
       <Footer />
       <CartDrawer />
       <UnifiedChat />
+      <ProactiveChat />
       <MobileBottomNav />
       <PWAInstallPrompt />
     </div>

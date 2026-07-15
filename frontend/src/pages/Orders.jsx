@@ -91,7 +91,20 @@ export default function OrdersPage() {
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-ink/60">
-                <span>{order.items?.length || 0} item{(order.items?.length || 0) === 1 ? "" : "s"}</span>
+                <span>
+                  {order.items?.length || 0} item{(order.items?.length || 0) === 1 ? "" : "s"}
+                  {order.items?.map((it) => (
+                    <span key={it.id}>
+                      {it.storage ? ` · ${it.storage}` : ""}
+                      {it.color ? ` · ${it.color}` : ""}
+                      {it.colorHex ? (
+                        <span className="ml-1 inline-flex items-center gap-1">
+                          <span className="h-3 w-3 rounded-full border border-ink/10" style={{ backgroundColor: it.colorHex }} />
+                        </span>
+                      ) : null}
+                    </span>
+                  ))}
+                </span>
                 <span className="font-700 text-ink">{formatGHS(order.total)}</span>
               </div>
             </div>
