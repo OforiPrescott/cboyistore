@@ -78,7 +78,7 @@ export default function ProactiveChat() {
 
   function handleChatClick() {
     dismiss();
-    document.querySelector<HTMLElement>("[data-chat-fab]")?.click();
+    window.dispatchEvent(new Event("open-chat-panel"));
   }
 
   if (cartOpen || !mounted) return null;

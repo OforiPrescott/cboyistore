@@ -135,6 +135,35 @@ export default function UnifiedChat() {
     return () => recognition.stop();
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function handleOpenChat() {
+      setOpen(true);
+      playOpenSound();
+    }
+    window.addEventListener("open-chat-panel", handleOpenChat);
+    return () => window.removeEventListener("open-chat-panel", handleOpenChat);
+  }, []);
+
+  function playOpenSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } catch {
+      // silent fallback
+    }
+  }
+
   const showChat = !cartOpen && !cartCheckoutOpen;
 
   function switchMode(newMode) {
@@ -195,13 +224,6 @@ export default function UnifiedChat() {
 
   return (
     <>
-      <button
-        data-chat-fab="true"
-        onClick={() => setOpen(true)}
-        className="hidden"
-        aria-hidden="true"
-        tabIndex={-1}
-      />
       {showChat && open && (
         <div className="fixed inset-x-0 bottom-0 z-[70] flex max-h-[92vh] flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-ink/10 sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-[24rem] sm:rounded-3xl sm:border sm:border-ink/10">
           <div className="flex items-center justify-between bg-ink px-4 py-3 text-cream">
