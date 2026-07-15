@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
+import { useUI } from "../context/UIContext.jsx";
 import { ShoppingBagIcon } from "../lib/icons.jsx";
 
 const NAV = [
@@ -51,8 +52,11 @@ function CartIcon() {
 }
 
 export default function MobileBottomNav() {
-  const { count, wishlistCount, setIsOpen } = useCart();
+  const { count, wishlistCount, setIsOpen, isOpen, checkoutOpen } = useCart();
+  const { modalOpen } = useUI();
   const location = useLocation();
+
+  const hidden = isOpen || checkoutOpen || modalOpen;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -66,7 +70,11 @@ export default function MobileBottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-white/95 backdrop-blur-lg pb-safe pt-1 md:hidden">
+    <nav
+      className={`fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-white/95 backdrop-blur-lg pb-safe pt-1 md:hidden transition-transform duration-200 ${
+        hidden ? "translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="mx-auto flex items-center justify-around">
         {NAV.map((item) => {
           const isActive = item.to === "/#shop" && location.hash === "#shop";
