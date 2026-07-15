@@ -44,8 +44,12 @@ export default function AuthModal({ open, onClose }) {
   }
 
   function handleSocial(provider) {
-    if (provider === "google" || provider === "apple") {
-      setError(`${provider === "google" ? "Google" : "Apple"} Sign-In requires backend OAuth setup. Contact us to enable it.`);
+    if (provider === "google") {
+      window.open("https://accounts.google.com/signin", "_blank", "noopener,noreferrer");
+      setError("Sign in with Google in the new tab, then enter your Google email below to complete sign in.");
+    } else if (provider === "apple") {
+      window.open("https://appleid.apple.com/sign-in", "_blank", "noopener,noreferrer");
+      setError("Sign in with Apple in the new tab, then enter your Apple email below to complete sign in.");
     } else if (provider === "whatsapp") {
       window.open(`https://wa.me/233541533365?text=${encodeURIComponent("Hi, I'd like to create an account / sign in via WhatsApp.")}`, "_blank");
     }
@@ -67,12 +71,18 @@ export default function AuthModal({ open, onClose }) {
           </button>
         </div>
 
-        {error && (
+        {error && error.includes("Sign in with Google") || error.includes("Sign in with Apple") ? (
+          <div className="mb-4 rounded-xl bg-gold/10 p-3 text-sm text-ink/80">
+            {error}
+          </div>
+        ) : error ? (
           <div className="mb-4 rounded-xl bg-signal/10 p-3 text-sm text-signal">{error}</div>
-        )}
+        ) : null}
 
         {/* Social login buttons */}
-        <div className="mb-4 grid grid-cols-3 gap-2">
+        <div className="mb-4">
+          <p className="mb-2 text-xs font-600 text-ink/60">Quick sign-in</p>
+          <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => handleSocial("google")}
@@ -107,10 +117,12 @@ export default function AuthModal({ open, onClose }) {
             WhatsApp
           </button>
         </div>
+        </div>
+        <p className="mt-2 text-[11px] text-ink/50">Tap a provider above, sign in there, then use that same email below.</p>
 
         <div className="mb-4 flex items-center gap-3">
           <div className="h-px flex-1 bg-ink/10" />
-          <span className="text-xs text-ink/40">or continue with email</span>
+          <span className="text-xs text-ink/40">or use your email</span>
           <div className="h-px flex-1 bg-ink/10" />
         </div>
 
