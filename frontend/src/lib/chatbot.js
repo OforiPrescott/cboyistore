@@ -1443,9 +1443,13 @@ function scoreIntent(message, intent) {
 
   for (const token of tokens) {
     for (const kw of keywordTokens) {
-      if (token === kw || token.includes(kw) || kw.includes(token)) {
-        const weight = intent.keywords[kw] || 1;
+      const weight = intent.keywords[kw] || 1;
+      if (token === kw) {
         score += weight;
+      } else if (kw.includes("_")) {
+        if (kw.split("_").includes(token)) {
+          score += 1;
+        }
       }
     }
   }
