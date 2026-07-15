@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { HeadsetIcon, ChatBubbleIcon, CloseIcon } from "../lib/icons.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-const DELAY_MS = 5000; // first notification after 5 seconds
-const VISIBLE_DURATION = 10 * 60 * 1000; // stay visible for 10 minutes
-const CYCLE_MS = 10 * 60 * 1000; // repeat every 10 minutes
+const DELAY_MS = 5000;
+const VISIBLE_DURATION = 10 * 60 * 1000;
+const CYCLE_MS = 10 * 60 * 1000;
 
 export default function ProactiveChat() {
   const { isOpen: cartOpen } = useCart();
@@ -85,38 +85,27 @@ export default function ProactiveChat() {
 
   return (
     <div
-      className={`fixed left-4 right-4 top-4 z-[65] sm:left-auto sm:right-6 sm:top-6 sm:w-80 transition-all duration-300 ease-out ${
-        visible ? "translate-x-0 opacity-100" : "-translate-x-full sm:translate-x-full opacity-0"
+      className={`fixed right-4 z-[65] transition-all duration-300 ease-out bottom-[calc(5rem+env(safe-area-inset-bottom))] sm:right-6 md:bottom-6 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
-      <div className="rounded-2xl bg-white shadow-2xl ring-1 ring-ink/10 overflow-hidden">
-        <div className="flex items-start gap-3 p-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal-gradient shadow-lg shadow-signal/30">
-            <HeadsetIcon className="h-5 w-5 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-700 text-ink">We are here to assist</p>
-            <p className="mt-0.5 text-xs text-ink/60 leading-relaxed">
-              Need help with a product, order or delivery? Our team is online.
-            </p>
-          </div>
-          <button
-            onClick={dismiss}
-            className="focus-ring shrink-0 rounded-full p-1 text-ink/40 hover:bg-ink/5 hover:text-ink"
-            aria-label="Dismiss"
-          >
-            <CloseIcon className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="border-t border-ink/5 bg-cream/40 px-4 py-2.5 flex items-center justify-between">
-          <span className="text-[11px] text-ink/50">We typically reply in minutes</span>
-          <button
-            onClick={handleChatClick}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-signal-gradient px-4 py-1.5 text-xs font-600 text-white shadow-md shadow-signal/20 hover:opacity-90 transition-opacity"
-          >
-            <ChatBubbleIcon className="h-3.5 w-3.5" /> Contact us
-          </button>
-        </div>
+      <div className="flex items-end gap-2">
+        <button
+          onClick={dismiss}
+          className="focus-ring rounded-full bg-white/95 p-2 text-ink/60 shadow-lg ring-1 ring-ink/10 hover:bg-white hover:text-ink"
+          aria-label="Dismiss notification"
+        >
+          <CloseIcon className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleChatClick}
+          data-chat-fab="true"
+          className="focus-ring relative flex items-center gap-2 rounded-full bg-signal-gradient pl-5 pr-6 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105"
+          aria-label="Chat with us"
+        >
+          <HeadsetIcon className="h-5 w-5" />
+          <span className="text-sm">We are here to assist</span>
+        </button>
       </div>
     </div>
   );

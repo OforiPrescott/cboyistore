@@ -195,16 +195,13 @@ export default function UnifiedChat() {
 
   return (
     <>
-      {showChat && !open && (
-        <button
-          data-chat-fab="true"
-          onClick={() => setOpen(true)}
-          className="focus-ring fixed right-4 z-[70] flex items-center gap-2 rounded-full bg-signal-gradient px-5 py-3.5 font-600 text-white shadow-xl shadow-signal/30 transition-transform hover:scale-105 bottom-[calc(5rem+env(safe-area-inset-bottom))] sm:right-6 md:bottom-6"
-        >
-          <ChatBubbleIcon className="h-5 w-5" /> Chat with us
-        </button>
-      )}
-
+      <button
+        data-chat-fab="true"
+        onClick={() => setOpen(true)}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
       {showChat && open && (
         <div className="fixed inset-x-0 bottom-0 z-[70] flex max-h-[92vh] flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-ink/10 sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-[24rem] sm:rounded-3xl sm:border sm:border-ink/10">
           <div className="flex items-center justify-between bg-ink px-4 py-3 text-cream">
