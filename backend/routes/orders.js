@@ -2,8 +2,9 @@ import { Router } from "express";
 import { nanoid } from "nanoid";
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
 import { buildWhatsappLink, notifyShopBySms } from "../services/notifications.js";
 import { sendOrderConfirmationEmail } from "../services/email.js";
 import { requireAdmin } from "../middleware/adminAuth.js";
@@ -51,9 +52,6 @@ router.post("/", async (req, res, next) => {
     let appliedCoupon = null;
 
     if (couponCode) {
-      const couponDb = await import("../data/coupons.json", { assert: { type: "json" } }).catch(() => null);
-      // We'll validate inline to avoid extra dependency
-      const fs = await import("node:fs");
       const couponsPath = path.join(__dirname, "..", "data", "coupons.json");
       const couponsData = JSON.parse(fs.readFileSync(couponsPath, "utf8"));
       const coupon = couponsData.coupons.find((c) => c.code.toUpperCase() === couponCode.toUpperCase());

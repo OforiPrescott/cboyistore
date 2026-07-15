@@ -206,7 +206,10 @@ export default function CouponsPage() {
 
       <Drawer
         open={Boolean(editing)}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+          setEditing(null);
+        }}
         title={editing?.id ? "Edit coupon" : "New coupon"}
         width="max-w-lg"
         footer={
@@ -214,7 +217,7 @@ export default function CouponsPage() {
             <Button type="submit" variant="primary" className="flex-1" disabled={saving} form="coupon-form">
               {saving ? "Saving…" : editing?.id ? "Save changes" : "Create coupon"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setDrawerOpen(false)} disabled={saving}>
+            <Button type="button" variant="outline" onClick={() => { setDrawerOpen(false); setEditing(null); }} disabled={saving}>
               Cancel
             </Button>
           </div>

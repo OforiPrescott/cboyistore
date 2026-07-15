@@ -22,6 +22,10 @@ export default function Checkout({ onClose }) {
   const [coupon, setCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
+
+  const subtotal = total;
+  const discount = coupon?.discount || 0;
+  const discountedTotal = Math.max(0, subtotal - discount);
   const [status, setStatus] = useState("form"); // form | processing | success | error
   const [errorMsg, setErrorMsg] = useState("");
   const [whatsappLink, setWhatsappLink] = useState(null);
@@ -97,7 +101,7 @@ export default function Checkout({ onClose }) {
       const handler = window.PaystackPop.setup({
         key: PAYSTACK_PUBLIC_KEY,
         email: form.email || `${form.phone}@cboyistore.customer`,
-        amount: Math.round(order.total * 100),
+        amount: Math.round(discountedTotal * 100),
         currency: "GHS",
         ref: order.reference,
         metadata: {
@@ -192,8 +196,20 @@ export default function Checkout({ onClose }) {
             <div className="mt-4 rounded-xl bg-cream p-4 text-sm">
               <div className="flex justify-between text-ink/60">
                 <span>{items.reduce((n, i) => n + i.qty, 0)} item(s)</span>
-                <span className="font-700 text-ink">{formatGHS(total)}</span>
+                <span className="font-700 text-ink">{formatGHS(subtotal)}</span>
               </div>
+              {discount > 0 && (
+                <div className="mt-1 flex justify-between text-xs text-emerald-700">
+                  <span>Coupon discount ({coupon?.coupon?.code})</span>
+                  <span>-{formatGHS(discount)}</span>
+                </div>
+              )}
+              {discount > 0 && (
+                <div className="mt-1 flex justify-between text-sm font-700 text-ink">
+                  <span>Total</span>
+                  <span>{formatGHS(discountedTotal)}</span>
+                </div>
+              )}
             </div>
 
             {user ? (
@@ -304,7 +320,7 @@ export default function Checkout({ onClose }) {
                 disabled={status === "processing"}
                 className="focus-ring mt-2 rounded-full bg-signal-gradient py-3.5 font-600 text-white shadow-lg shadow-signal/30 disabled:opacity-60"
               >
-                {status === "processing" ? "Opening Paystack…" : `Pay ${formatGHS(total)} now`}
+                {status === "processing" ? "Opening Paystack…" : `Pay ${formatGHS(discountedTotal)} now`}
               </button>
               <p className="text-center text-[11px] text-ink/40">
                 Secured by Paystack. We never see or store your card details.

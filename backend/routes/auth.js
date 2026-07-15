@@ -104,9 +104,12 @@ export function requireAuth(req, res, next) {
 
 router.post("/register", rateLimiter(3, 60 * 60 * 1000), async (req, res, next) => {
   try {
-    const { name, email, password, phone, location } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email and password are required" });
+    const { name, email, phone, password, location } = req.body;
+    if (!name || !password) {
+      return res.status(400).json({ error: "Name and password are required" });
+    }
+    if (!email && !phone) {
+      return res.status(400).json({ error: "Email or phone number is required" });
     }
 
     const passwordCheck = validatePassword(password);
@@ -115,22 +118,34 @@ router.post("/register", rateLimiter(3, 60 * 60 * 1000), async (req, res, next) 
     }
 
     const database = await getDb();
-    const existing = database.data.users.find((user) => user.email.toLowerCase() === email.toLowerCase());
-    if (existing) {
-      return res.status(409).json({ error: "An account with this email already exists" });
+
+    if (email) {
+      const existingEmail = database.data.users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+      if (existingEmail) {
+        return res.status(409).json({ error: "An account with this email already exists" });
+      }
+    }
+
+    if (phone) {
+      const existingPhone = database.data.users.find((user) => user.phone === phone);
+      if (existingPhone) {
+        return res.status(409).json({ error: "An account with this phone number already exists" });
+      }
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
     const user = {
       id: nanoid(10),
       name,
-      email: email.toLowerCase(),
+      email: email ? email.toLowerCase() : null,
       phone: phone || null,
       passwordHash,
       role: "customer",
       location: location || null,
       createdAt: new Date().toISOString(),
       lastLoginAt: null,
+      failedLoginAttempts: 0,
+      lockedUntil: null,
     };
 
     database.data.users.push(user);
