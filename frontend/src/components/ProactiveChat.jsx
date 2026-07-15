@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { HeadsetIcon, ChatBubbleIcon, CloseIcon } from "../lib/icons.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-const DELAY_MS = 8000; // show after 8 seconds
-const TOOLTIP_DURATION = 6000; // tooltip stays for 6 seconds
-const COOLDOWN_MS = 120_000; // don't re-show for 2 minutes
+const DELAY_MS = 8000; // show after 8 seconds of idle
+const TOOLTIP_DURATION = 5000; // tooltip/contact button stays for 5s
+const VISIBLE_DURATION = 8000; // total visible time before auto-hide
+const CYCLE_MS = 10 * 60 * 1000; // repeat every 10 minutes
 
 export default function ProactiveChat() {
   const { isOpen: cartOpen } = useCart();
@@ -14,60 +15,57 @@ export default function ProactiveChat() {
   const [muted, setMuted] = useState(false);
   const timerRef = useRef(null);
   const tooltipTimerRef = useRef(null);
-  const cooldownRef = useRef(null);
+  const hideTimerRef = useRef(null);
+  const cycleRef = useRef(null);
   const audioCtxRef = useRef(null);
 
-  useEffect(() => {
-    if (cartOpen) return;
-
-    timerRef.current = setTimeout(() => {
-      setVisible(true);
-      setTooltip(true);
-      if (!muted) playChime();
-      tooltipTimerRef.current = setTimeout(() => {
-        setTooltip(false);
-        setContactUs(true);
-      }, TOOLTIP_DURATION);
-    }, DELAY_MS);
-
-    return () => {
-      clearTimeout(timerRef.current);
-      clearTimeout(tooltipTimerRef.current);
-      clearTimeout(cooldownRef.current);
-    };
-  }, [cartOpen, muted]);
-
-  function playChime() {
-    try {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      const ctx = audioCtxRef.current;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(520, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.4);
-    } catch {
-      // silent fallback if audio is blocked
-    }
+  function clearAllTimers() {
+    clearTimeout(timerRef.current);
+    clearTimeout(tooltipTimerRef.current);
+    clearTimeout(hideTimerRef.current);
+    clearTimeout(cycleRef.current);
   }
 
-  function dismiss() {
-    setVisible(false);
-    setTooltip(false);
-    setContactUs(false);
-    cooldownRef.current = setTimeout(() => {
+  function showNotification() {
+    if (muted || cartOpen) return;
+    setVisible(true);
+    setTooltip(true);
+    playChime();
+    tooltipTimerRef.current = setTimeout(() => {
+      setTooltip(false);
+      setContactUs(true);
+    }, TOOLTIP_DURATION);
+    hideTimerRef.current = setTimeout(() => {
       setVisible(false);
       setTooltip(false);
       setContactUs(false);
-    }, COOLDOWN_MS);
+      // schedule next appearance in 10 minutes
+      cycleRef.current = setTimeout(showNotification, CYCLE_MS);
+    }, VISIBLE_DURATION);
+  }
+
+  useEffect(() => {
+    clearAllTimers();
+    if (cartOpen) {
+      setVisible(false);
+      setTooltip(false);
+      setContactUs(false);
+      // reschedule after cart closes
+      cycleRef.current = setTimeout(showNotification, CYCLE_MS);
+      return;
+    }
+    // first appearance after delay
+    timerRef.current = setTimeout(showNotification, DELAY_MS);
+    return clearAllTimers;
+  }, [cartOpen, muted]);
+
+  function dismiss() {
+    clearAllTimers();
+    setVisible(false);
+    setTooltip(false);
+    setContactUs(false);
+    // schedule next appearance in 10 minutes
+    cycleRef.current = setTimeout(showNotification, CYCLE_MS);
   }
 
   function handleChatClick() {
