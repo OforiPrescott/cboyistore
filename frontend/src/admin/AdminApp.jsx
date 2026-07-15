@@ -11,6 +11,7 @@ import CustomersPage from "./pages/CustomersPage.jsx";
 import TradeInPage from "./pages/TradeInPage.jsx";
 import WorkersPage from "./pages/WorkersPage.jsx";
 import AuditLogPage from "./pages/AuditLogPage.jsx";
+import CouponsPage from "./pages/CouponsPage.jsx";
 
 function Shell() {
   const { isAuthed, workerInfo } = useAdmin();
@@ -54,6 +55,7 @@ function Shell() {
               <Route path="/trade-in" element={<TradeInPage />} />
               <Route path="/workers" element={<WorkersPage />} />
               <Route path="/audit" element={<AuditLogPage />} />
+              <Route path="/coupons" element={<CouponsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

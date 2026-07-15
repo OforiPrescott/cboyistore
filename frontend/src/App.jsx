@@ -16,6 +16,7 @@ import CheckoutSuccess from "./pages/CheckoutSuccess.jsx";
 import TradeIn from "./pages/TradeIn.jsx";
 import OrdersPage from "./pages/Orders.jsx";
 import WishlistPage from "./pages/Wishlist.jsx";
+import ProfilePage from "./pages/Profile.jsx";
 
 function Home() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
       <Footer />
       <CartDrawer />

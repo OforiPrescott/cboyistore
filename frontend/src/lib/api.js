@@ -141,3 +141,14 @@ export async function rateProduct(productId, rating) {
   });
   return handle(res);
 }
+
+// --- Coupons ---
+
+export async function validateCoupon(code, orderTotal) {
+  const res = await fetch(`${BASE}/coupons/validate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code, orderTotal }),
+  });
+  return handle(res);
+}

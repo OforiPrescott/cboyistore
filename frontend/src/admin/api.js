@@ -194,3 +194,36 @@ export async function apiFetchAuditSummary(adminKey) {
   return handle(res);
 }
 
+// --- Coupons ---
+
+export async function apiFetchCoupons(adminKey) {
+  const res = await fetch(`${BASE}/coupons`, { headers: authHeaders(adminKey, false) });
+  return handle(res);
+}
+
+export async function apiCreateCoupon(adminKey, coupon) {
+  const res = await fetch(`${BASE}/coupons`, {
+    method: "POST",
+    headers: authHeaders(adminKey),
+    body: JSON.stringify(coupon),
+  });
+  return handle(res);
+}
+
+export async function apiUpdateCoupon(adminKey, id, coupon) {
+  const res = await fetch(`${BASE}/coupons/${id}`, {
+    method: "PUT",
+    headers: authHeaders(adminKey),
+    body: JSON.stringify(coupon),
+  });
+  return handle(res);
+}
+
+export async function apiDeleteCoupon(adminKey, id) {
+  const res = await fetch(`${BASE}/coupons/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(adminKey, false),
+  });
+  return handle(res);
+}
+

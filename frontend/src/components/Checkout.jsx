@@ -18,6 +18,10 @@ export default function Checkout({ onClose }) {
     address: "",
     deliveryMethod: "delivery",
   });
+  const [couponCode, setCouponCode] = useState("");
+  const [coupon, setCoupon] = useState(null);
+  const [couponError, setCouponError] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
   const [status, setStatus] = useState("form"); // form | processing | success | error
   const [errorMsg, setErrorMsg] = useState("");
   const [whatsappLink, setWhatsappLink] = useState(null);
@@ -36,6 +40,27 @@ export default function Checkout({ onClose }) {
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  async function applyCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError("");
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponCode.trim(), orderTotal: total }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Invalid coupon");
+      setCoupon(data);
+    } catch (err) {
+      setCouponError(err.message);
+      setCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
   }
 
   async function handlePay(e) {
@@ -60,6 +85,7 @@ export default function Checkout({ onClose }) {
         })),
         customer: form,
         token,
+        couponCode: coupon?.coupon?.code || couponCode.trim() || undefined,
       });
       setReference(order.reference);
       setWhatsappLink(order.whatsappLink);
@@ -241,6 +267,38 @@ export default function Checkout({ onClose }) {
                 <p className="text-sm text-signal">{errorMsg}</p>
               )}
 
+              {/* Coupon */}
+              <div className="space-y-2">
+                {!coupon ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Coupon code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      className="focus-ring flex-1 rounded-xl border border-ink/10 px-4 py-3 text-sm uppercase"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="focus-ring rounded-xl bg-ink px-4 py-3 text-sm font-600 text-cream disabled:opacity-50"
+                    >
+                      {couponLoading ? "..." : "Apply"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between rounded-xl bg-gold/10 px-4 py-2.5">
+                    <div>
+                      <p className="text-sm font-700 text-ink">{coupon.coupon.code}</p>
+                      <p className="text-xs text-ink/60">-{formatGHS(coupon.discount)} off</p>
+                    </div>
+                    <button type="button" onClick={() => { setCoupon(null); setCouponCode(""); }} className="text-xs text-signal hover:underline">Remove</button>
+                  </div>
+                )}
+                {couponError && <p className="text-xs text-signal">{couponError}</p>}
+              </div>
+
               <button
                 type="submit"
                 disabled={status === "processing"}
@@ -264,7 +322,7 @@ export default function Checkout({ onClose }) {
           </>
         )}
         {showAuth && (
-          <AuthModal onClose={() => setShowAuth(false)} />
+          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
         )}
       </div>
     </div>

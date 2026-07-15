@@ -8,6 +8,7 @@ import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import { sendWelcomeEmail } from "../services/email.js";
 import { logAudit, actorFromReq } from "../services/audit.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const file = path.join(__dirname, "..", "data", "customers", "customers.json");
@@ -23,13 +24,24 @@ async function getDb() {
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret-change-me";
 const JWT_EXPIRES_IN = "7d";
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
 
 export function validatePassword(password) {
   if (!password || password.length < 8) {
     return { valid: false, reason: "Password must be at least 8 characters long" };
   }
-  if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
-    return { valid: false, reason: "Password must include uppercase letters and numbers" };
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, reason: "Password must include at least one uppercase letter" };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, reason: "Password must include at least one lowercase letter" };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, reason: "Password must include at least one number" };
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return { valid: false, reason: "Password must include at least one special character (!@#$%^&*)" };
   }
   return { valid: true };
 }
@@ -90,7 +102,7 @@ export function requireAuth(req, res, next) {
   }
 }
 
-router.post("/register", async (req, res, next) => {
+router.post("/register", rateLimiter(3, 60 * 60 * 1000), async (req, res, next) => {
   try {
     const { name, email, password, phone, location } = req.body;
     if (!name || !email || !password) {
@@ -133,24 +145,45 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.post("/login", async (req, res, next) => {
+router.post("/login", rateLimiter(5, 15 * 60 * 1000), async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    const { email, phone, password } = req.body;
+    if ((!email && !phone) || !password) {
+      return res.status(400).json({ error: "Email or phone and password are required" });
     }
 
     const database = await getDb();
-    const user = database.data.users.find((entry) => entry.email.toLowerCase() === email.toLowerCase());
+    const user = database.data.users.find((entry) => {
+      if (email) return entry.email.toLowerCase() === email.toLowerCase();
+      if (phone) return entry.phone === phone;
+      return false;
+    });
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Check if account is locked
+    if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+      const remaining = Math.ceil((new Date(user.lockedUntil) - new Date()) / 1000 / 60);
+      return res.status(423).json({ error: `Account locked due to too many failed attempts. Try again in ${remaining} minutes.` });
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+      if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+        user.lockedUntil = new Date(Date.now() + LOCKOUT_DURATION).toISOString();
+        user.failedLoginAttempts = 0;
+        await database.write();
+        return res.status(423).json({ error: "Account locked due to too many failed attempts. Try again in 30 minutes." });
+      }
+      await database.write();
+      return res.status(401).json({ error: `Invalid credentials. ${MAX_FAILED_ATTEMPTS - user.failedLoginAttempts} attempts remaining before lockout.` });
     }
 
+    // Reset failed attempts on successful login
+    user.failedLoginAttempts = 0;
+    user.lockedUntil = null;
     user.lastLoginAt = new Date().toISOString();
     await database.write();
 

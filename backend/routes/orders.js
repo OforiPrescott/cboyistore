@@ -26,7 +26,7 @@ const router = Router();
 // POST /api/orders  — create a pending order before payment
 router.post("/", async (req, res, next) => {
   try {
-    const { items, customer } = req.body;
+    const { items, customer, couponCode } = req.body;
     if (!items || !items.length) {
       return res.status(400).json({ error: "Cart is empty" });
     }
@@ -47,13 +47,58 @@ router.post("/", async (req, res, next) => {
       return res.status(400).json({ error: "Customer name and phone are required" });
     }
 
-    const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    let appliedCoupon = null;
+
+    if (couponCode) {
+      const couponDb = await import("../data/coupons.json", { assert: { type: "json" } }).catch(() => null);
+      // We'll validate inline to avoid extra dependency
+      const fs = await import("node:fs");
+      const couponsPath = path.join(__dirname, "..", "data", "coupons.json");
+      const couponsData = JSON.parse(fs.readFileSync(couponsPath, "utf8"));
+      const coupon = couponsData.coupons.find((c) => c.code.toUpperCase() === couponCode.toUpperCase());
+
+      if (!coupon) {
+        return res.status(400).json({ error: "Invalid coupon code" });
+      }
+      if (!coupon.active) {
+        return res.status(400).json({ error: "Coupon is no longer active" });
+      }
+      if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
+        return res.status(400).json({ error: "Coupon has expired" });
+      }
+      if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+        return res.status(400).json({ error: "Coupon usage limit reached" });
+      }
+      if (coupon.minPurchase && total < coupon.minPurchase) {
+        return res.status(400).json({ error: `Minimum purchase of GHS ${coupon.minPurchase.toLocaleString()} required` });
+      }
+
+      let discount = 0;
+      if (coupon.discountType === "percentage") {
+        discount = (total * coupon.discountValue) / 100;
+        if (coupon.maxDiscount) discount = Math.min(discount, coupon.maxDiscount);
+      } else {
+        discount = coupon.discountValue;
+      }
+
+      total = Math.round((total - discount) * 100) / 100;
+      appliedCoupon = { code: coupon.code, discount: Math.round(discount * 100) / 100 };
+
+      // Increment usage count
+      coupon.usedCount = (coupon.usedCount || 0) + 1;
+      fs.writeFileSync(couponsPath, JSON.stringify(couponsData, null, 2));
+    }
+
     const order = {
       id: nanoid(10),
       reference: `CBOY-${nanoid(8).toUpperCase()}`,
       items,
       customer: buyer,
       total,
+      subtotal: items.reduce((sum, item) => sum + item.price * item.qty, 0),
+      discount: appliedCoupon?.discount || 0,
+      couponCode: appliedCoupon?.code || null,
       status: "pending",
       createdAt: new Date().toISOString(),
       userId: authUser?.id || null,
