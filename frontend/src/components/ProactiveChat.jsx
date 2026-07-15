@@ -2,44 +2,57 @@ import React, { useEffect, useRef, useState } from "react";
 import { HeadsetIcon, ChatBubbleIcon, CloseIcon } from "../lib/icons.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-const DELAY_MS = 8000; // show after 8 seconds of idle
-const TOOLTIP_DURATION = 5000; // tooltip/contact button stays for 5s
-const VISIBLE_DURATION = 8000; // total visible time before auto-hide
-const CYCLE_MS = 10 * 60 * 1000; // repeat every 10 minutes
+const DELAY_MS = 8000;
+const VISIBLE_DURATION = 8000;
+const CYCLE_MS = 10 * 60 * 1000;
 
 export default function ProactiveChat() {
   const { isOpen: cartOpen } = useCart();
   const [visible, setVisible] = useState(false);
-  const [tooltip, setTooltip] = useState(false);
-  const [contactUs, setContactUs] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const timerRef = useRef(null);
-  const tooltipTimerRef = useRef(null);
   const hideTimerRef = useRef(null);
   const cycleRef = useRef(null);
   const audioCtxRef = useRef(null);
 
   function clearAllTimers() {
     clearTimeout(timerRef.current);
-    clearTimeout(tooltipTimerRef.current);
     clearTimeout(hideTimerRef.current);
     clearTimeout(cycleRef.current);
   }
 
+  function playChime() {
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(520, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } catch {
+      // silent fallback if audio is blocked
+    }
+  }
+
   function showNotification() {
-    if (muted || cartOpen) return;
-    setVisible(true);
-    setTooltip(true);
+    if (cartOpen) return;
+    setMounted(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
     playChime();
-    tooltipTimerRef.current = setTimeout(() => {
-      setTooltip(false);
-      setContactUs(true);
-    }, TOOLTIP_DURATION);
     hideTimerRef.current = setTimeout(() => {
       setVisible(false);
-      setTooltip(false);
-      setContactUs(false);
-      // schedule next appearance in 10 minutes
+      setTimeout(() => setMounted(false), 300);
       cycleRef.current = setTimeout(showNotification, CYCLE_MS);
     }, VISIBLE_DURATION);
   }
@@ -48,23 +61,18 @@ export default function ProactiveChat() {
     clearAllTimers();
     if (cartOpen) {
       setVisible(false);
-      setTooltip(false);
-      setContactUs(false);
-      // reschedule after cart closes
+      setTimeout(() => setMounted(false), 300);
       cycleRef.current = setTimeout(showNotification, CYCLE_MS);
-      return;
+      return clearAllTimers;
     }
-    // first appearance after delay
     timerRef.current = setTimeout(showNotification, DELAY_MS);
     return clearAllTimers;
-  }, [cartOpen, muted]);
+  }, [cartOpen]);
 
   function dismiss() {
     clearAllTimers();
     setVisible(false);
-    setTooltip(false);
-    setContactUs(false);
-    // schedule next appearance in 10 minutes
+    setTimeout(() => setMounted(false), 300);
     cycleRef.current = setTimeout(showNotification, CYCLE_MS);
   }
 
@@ -73,44 +81,42 @@ export default function ProactiveChat() {
     document.querySelector<HTMLElement>("[data-chat-fab]")?.click();
   }
 
-  if (cartOpen || !visible) return null;
+  if (cartOpen || !mounted) return null;
 
   return (
-    <div className="fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-[65] flex items-end gap-2 sm:right-6 sm:bottom-6">
-      {tooltip && (
-        <div className="max-w-[14rem] rounded-2xl bg-white px-4 py-3 text-sm text-ink shadow-xl ring-1 ring-ink/10 animate-bounce">
-          <p className="font-600">We are here to assist</p>
-          <p className="mt-0.5 text-xs text-ink/60">Need help with a product, order or delivery?</p>
-        </div>
-      )}
-      {contactUs && (
-        <button
-          onClick={dismiss}
-          className="flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-600 text-ink shadow-lg ring-1 ring-ink/10 hover:bg-ink/5"
-        >
-          <ChatBubbleIcon className="h-4 w-4 text-signal" /> Contact us for assistance
-        </button>
-      )}
-      <div className="relative flex items-center gap-2">
-        {!muted && (
+    <div
+      className={`fixed left-4 right-4 top-4 z-[65] sm:left-auto sm:right-6 sm:top-6 sm:w-80 transition-all duration-300 ease-out ${
+        visible ? "translate-x-0 opacity-100" : "-translate-x-full sm:translate-x-full opacity-0"
+      }`}
+    >
+      <div className="rounded-2xl bg-white shadow-2xl ring-1 ring-ink/10 overflow-hidden">
+        <div className="flex items-start gap-3 p-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal-gradient shadow-lg shadow-signal/30">
+            <HeadsetIcon className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-700 text-ink">We are here to assist</p>
+            <p className="mt-0.5 text-xs text-ink/60 leading-relaxed">
+              Need help with a product, order or delivery? Our team is online.
+            </p>
+          </div>
           <button
-            onClick={() => setMuted(true)}
-            className="focus-ring rounded-full bg-white/90 p-2 text-ink/50 shadow ring-1 ring-ink/10 hover:text-ink"
-            aria-label="Mute notification"
-            title="Mute"
+            onClick={dismiss}
+            className="focus-ring shrink-0 rounded-full p-1 text-ink/40 hover:bg-ink/5 hover:text-ink"
+            aria-label="Dismiss"
           >
-            🔊
+            <CloseIcon className="h-4 w-4" />
           </button>
-        )}
-        <button
-          onClick={handleChatClick}
-          data-chat-fab="true"
-          className="focus-ring relative flex h-14 w-14 items-center justify-center rounded-full bg-signal-gradient shadow-xl shadow-signal/30 transition-transform hover:scale-105"
-          aria-label="Chat with us"
-        >
-          <HeadsetIcon className="h-6 w-6 text-white" />
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-700 text-signal ring-2 ring-signal">1</span>
-        </button>
+        </div>
+        <div className="border-t border-ink/5 bg-cream/40 px-4 py-2.5 flex items-center justify-between">
+          <span className="text-[11px] text-ink/50">We typically reply in minutes</span>
+          <button
+            onClick={handleChatClick}
+            className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-signal-gradient px-4 py-1.5 text-xs font-600 text-white shadow-md shadow-signal/20 hover:opacity-90 transition-opacity"
+          >
+            <ChatBubbleIcon className="h-3.5 w-3.5" /> Contact us
+          </button>
+        </div>
       </div>
     </div>
   );
