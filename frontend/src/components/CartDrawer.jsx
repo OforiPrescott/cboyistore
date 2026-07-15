@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useCart } from "../context/CartContext.jsx";
 import { formatGHS } from "../lib/format.js";
 import { whatsAppCartLink } from "../lib/whatsapp.js";
 import Checkout from "./Checkout.jsx";
+import { CloseIcon } from "../lib/icons.jsx";
 
 export default function CartDrawer() {
-  const { items, isOpen, setIsOpen, updateQty, removeItem, total } = useCart();
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const { items, isOpen, setIsOpen, updateQty, removeItem, total, checkoutOpen, setCheckoutOpen } = useCart();
 
   if (!isOpen) return null;
 
@@ -25,7 +25,7 @@ export default function CartDrawer() {
             className="focus-ring rounded-full p-2 text-ink/50 hover:bg-ink/5"
             aria-label="Close"
           >
-            ✕
+            <CloseIcon className="h-5 w-5" />
           </button>
         </div>
 

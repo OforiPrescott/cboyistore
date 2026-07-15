@@ -22,6 +22,7 @@ export function CartProvider({ children }) {
     }
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
@@ -138,6 +139,8 @@ export function CartProvider({ children }) {
     wishlistCount,
     isOpen,
     setIsOpen,
+    checkoutOpen,
+    setCheckoutOpen,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
