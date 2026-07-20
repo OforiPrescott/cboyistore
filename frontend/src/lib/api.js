@@ -86,6 +86,33 @@ export async function apiDeleteMyAccount(token) {
   return handle(res);
 }
 
+export async function forgotPassword(payload) {
+  const res = await fetch(`${BASE}/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function resetPassword(payload) {
+  const res = await fetch(`${BASE}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
+export async function changePassword(token, payload) {
+  const res = await fetch(`${BASE}/auth/change-password`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handle(res);
+}
+
 export async function estimateTradein({ deviceId, condition }) {
   const res = await fetch(`${BASE}/tradein/estimate`, {
     method: "POST",

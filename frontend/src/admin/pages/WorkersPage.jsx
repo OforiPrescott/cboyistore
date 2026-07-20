@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, EmptyState, Input, Modal, Spinner } from "../ui.jsx";
 import { useAdmin } from "../AdminContext.jsx";
-import { apiFetchWorkers, apiCreateWorker, apiUpdateWorker, apiDeleteWorker } from "../api.js";
+import { apiFetchWorkers, apiCreateWorker, apiUpdateWorker, apiDeleteWorker, apiResetWorkerPassword } from "../api.js";
 
 const ROLES = ["admin", "manager", "staff"];
 
@@ -14,6 +14,9 @@ export default function WorkersPage() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: "", username: "", password: "", role: "staff" });
   const [saving, setSaving] = useState(false);
+  const [resetWorker, setResetWorker] = useState(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -82,6 +85,24 @@ export default function WorkersPage() {
       notify("Worker removed", "success");
     } catch (err) {
       notify(err.message || "Failed to delete worker", "error");
+    }
+  }
+
+  async function handleResetPassword(worker) {
+    if (!resetPassword || resetPassword.length < 8) {
+      notify("Password must be at least 8 characters", "error");
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await apiResetWorkerPassword(adminKey, worker.id, resetPassword);
+      notify(`Password reset for ${worker.name}`, "success");
+      setResetWorker(null);
+      setResetPassword("");
+    } catch (err) {
+      notify(err.message || "Failed to reset password", "error");
+    } finally {
+      setResetLoading(false);
     }
   }
 
@@ -173,6 +194,13 @@ export default function WorkersPage() {
                       Edit
                     </button>
                     <button
+                      onClick={() => { setResetWorker(worker); setResetPassword(""); }}
+                      disabled={saving}
+                      className="focus-ring mr-2 rounded-full border border-gold/30 px-3 py-1.5 text-xs font-600 text-gold hover:bg-gold/10"
+                    >
+                      Reset password
+                    </button>
+                    <button
                       onClick={() => handleDelete(worker)}
                       disabled={saving || worker.id === workerInfo?.id}
                       className="focus-ring rounded-full border border-signal/20 px-3 py-1.5 text-xs font-600 text-signal transition hover:bg-signal hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
@@ -256,6 +284,22 @@ export default function WorkersPage() {
             </div>
             <Button type="submit" className="w-full" disabled={saving}>
               {saving ? "Saving…" : "Save changes"}
+            </Button>
+          </form>
+        )}
+      </Modal>
+
+      {/* Reset password modal */}
+      <Modal open={Boolean(resetWorker)} onClose={() => { setResetWorker(null); setResetPassword(""); }} title={`Reset password for ${resetWorker?.name || ""}`}>
+        {resetWorker && (
+          <form onSubmit={(e) => { e.preventDefault(); handleResetPassword(resetWorker); }} className="mt-4 space-y-4">
+            <div>
+              <label className="block text-xs font-600 text-ink/50">New password</label>
+              <Input type="password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} className="mt-1.5" placeholder="Min 8 characters" minLength={8} required />
+              <p className="mt-1 text-[11px] text-ink/40">Worker will be required to change this on next login.</p>
+            </div>
+            <Button type="submit" className="w-full" disabled={resetLoading}>
+              {resetLoading ? "Resetting…" : "Reset password"}
             </Button>
           </form>
         )}

@@ -278,4 +278,24 @@ router.get("/audit/summary", requireAdmin, async (req, res, next) => {
   }
 });
 
+router.post("/workers/:id/reset-password", requireAdmin, async (req, res, next) => {
+  try {
+    const workers = await readWorkers();
+    const worker = workers.find((w) => w.id === req.params.id);
+    if (!worker) return res.status(404).json({ error: "Worker not found" });
+
+    const { password } = req.body;
+    if (!password || password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+    }
+
+    worker.passwordHash = await bcrypt.hash(password, 12);
+    await writeWorkers(workers);
+
+    res.json({ message: "Password reset successfully" });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

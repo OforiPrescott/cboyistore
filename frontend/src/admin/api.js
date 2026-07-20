@@ -178,6 +178,15 @@ export async function apiDeleteWorker(adminKey, id) {
   return handle(res);
 }
 
+export async function apiResetWorkerPassword(adminKey, id, password) {
+  const res = await fetch(`${BASE}/admin/workers/${id}/reset-password`, {
+    method: "POST",
+    headers: authHeaders(adminKey),
+    body: JSON.stringify({ password }),
+  });
+  return handle(res);
+}
+
 // --- Audit ---
 
 export async function apiFetchAudit(adminKey, params = {}) {

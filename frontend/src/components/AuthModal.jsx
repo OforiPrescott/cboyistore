@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function AuthModal({ open, onClose }) {
@@ -187,7 +188,11 @@ export default function AuthModal({ open, onClose }) {
             required
             minLength={8}
           />
-
+          {mode === "login" && (
+            <p className="text-right">
+              <Link to="/forgot-password" onClick={onClose} className="text-xs font-600 text-signal hover:underline">Forgot password?</Link>
+            </p>
+          )}
           <button
             type="submit"
             disabled={loading}

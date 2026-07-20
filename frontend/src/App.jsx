@@ -17,6 +17,8 @@ import TradeIn from "./pages/TradeIn.jsx";
 import OrdersPage from "./pages/Orders.jsx";
 import WishlistPage from "./pages/Wishlist.jsx";
 import ProfilePage from "./pages/Profile.jsx";
+import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
+import ResetPasswordPage from "./pages/ResetPassword.jsx";
 
 function Home() {
   return (
@@ -41,6 +43,8 @@ export default function App() {
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
       <Footer />
       <CartDrawer />
