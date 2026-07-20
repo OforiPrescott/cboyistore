@@ -11,144 +11,11 @@ import { sendWelcomeEmail, sendPasswordResetEmail, sendPasswordChangedEmail } fr
 import { logAudit, actorFromReq } from "../services/audit.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const file = path.join(__dirname, "..", "data", "customers", "customers.json");
-const adapter = new JSONFile(file);
-const db = new Low(adapter, { users: [] });
-
-async function getDb() {
-  await db.read();
-  db.data ||= { users: [] };
-  return db;
-}
-
-// In-memory password reset tokens: { token: { email, expiresAt } }
-const passwordResetTokens = new Map();
-
-function cleanExpiredTokens() {
-  const now = Date.now();
-  for (const [token, data] of passwordResetTokens.entries()) {
-    if (new Date(data.expiresAt).getTime() < now) {
-      passwordResetTokens.delete(token);
-    }
-  }
-}
-
-router.post("/forgot-password", rateLimiter(5, 60 * 60 * 1000), async (req, res, next) => {
-  try {
-    const { email, phone } = req.body;
-    if (!email && !phone) {
-      return res.status(400).json({ error: "Email or phone is required" });
-    }
-
-    const database = await getDb();
-    const user = database.data.users.find((entry) => {
-      if (email) return entry.email.toLowerCase() === email.toLowerCase();
-      if (phone) return entry.phone === phone;
-      return false;
-    });
-
-    // Always return success to prevent email enumeration
-    if (!user) {
-      return res.json({ message: "If an account exists, a reset link has been sent." });
-    }
-
-    cleanExpiredTokens();
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
-    passwordResetTokens.set(token, { email: user.email, userId: user.id, expiresAt });
-
-    const resetUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password?token=${token}`;
-    await sendPasswordResetEmail(user, resetUrl);
-
-    res.json({ message: "If an account exists, a reset link has been sent." });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/reset-password", rateLimiter(5, 60 * 60 * 1000), async (req, res, next) => {
-  try {
-    const { token, password } = req.body;
-    if (!token || !password) {
-      return res.status(400).json({ error: "Token and password are required" });
-    }
-
-    const resetData = passwordResetTokens.get(token);
-    if (!resetData) {
-      return res.status(400).json({ error: "Invalid or expired reset token" });
-    }
-
-    if (new Date(resetData.expiresAt).getTime() < Date.now()) {
-      passwordResetTokens.delete(token);
-      return res.status(400).json({ error: "Reset token has expired" });
-    }
-
-    const passwordCheck = validatePassword(password);
-    if (!passwordCheck.valid) {
-      return res.status(400).json({ error: passwordCheck.reason });
-    }
-
-    const database = await getDb();
-    const user = database.data.users.find((u) => u.id === resetData.userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    user.passwordHash = await bcrypt.hash(password, 12);
-    user.failedLoginAttempts = 0;
-    user.lockedUntil = null;
-    await database.write();
-
-    passwordResetTokens.delete(token);
-
-    await sendPasswordChangedEmail(user);
-
-    res.json({ message: "Password reset successfully" });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/change-password", requireAuth, rateLimiter(5, 60 * 60 * 1000), async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: "Current password and new password are required" });
-    }
-
-    const passwordCheck = validatePassword(newPassword);
-    if (!passwordCheck.valid) {
-      return res.status(400).json({ error: passwordCheck.reason });
-    }
-
-    const database = await getDb();
-    const user = database.data.users.find((u) => u.id === req.user.sub);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
-    if (!valid) {
-      return res.status(401).json({ error: "Current password is incorrect" });
-    }
-
-    user.passwordHash = await bcrypt.hash(newPassword, 12);
-    await database.write();
-
-    await sendPasswordChangedEmail(user);
-
-    res.json({ message: "Password changed successfully" });
-  } catch (err) {
-    next(err);
-  }
-});
-
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret-change-me";
 const JWT_EXPIRES_IN = "7d";
 const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
+const LOCKOUT_DURATION = 30 * 60 * 1000;
 
 export function validatePassword(password) {
   if (!password || password.length < 8) {
@@ -167,6 +34,62 @@ export function validatePassword(password) {
     return { valid: false, reason: "Password must include at least one special character (!@#$%^&*)" };
   }
   return { valid: true };
+}
+
+function sanitizeUser(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    createdAt: user.createdAt,
+    lastLoginAt: user.lastLoginAt,
+    role: user.role || "customer",
+    location: user.location || null,
+  };
+}
+
+const ADMIN_KEY_FALLBACK = "CboyIstore@2026";
+
+function authHeader(req) {
+  const header = req.header("authorization") || "";
+  return header.startsWith("Bearer ") ? header.slice(7) : "";
+}
+
+export function decodeToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
+  }
+}
+
+export async function getUserFromRequest(req) {
+  const token = authHeader(req);
+  if (!token) return null;
+  const payload = decodeToken(token);
+  if (!payload) return null;
+  const database = await getDb();
+  return database.data.users.find((entry) => entry.id === payload.sub) || null;
+}
+
+export function isAdminKey(req) {
+  const key = req.header("x-admin-key");
+  const expected = process.env.ADMIN_KEY || ADMIN_KEY_FALLBACK;
+  return key && key === expected;
+}
+
+export function requireAuth(req, res, next) {
+  const token = authHeader(req);
+  if (!token) return res.status(401).json({ error: "Authentication required" });
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
 }
 
 function sanitizeUser(user) {
