@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import AuthModal from "./AuthModal.jsx";
 import { useCart } from "../context/CartContext.jsx";
@@ -10,6 +10,7 @@ export default function Header() {
   const { user, logout } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -130,7 +131,7 @@ export default function Header() {
           )}
         </div>
       </header>
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => navigate("/")} />
     </>
   );
 }

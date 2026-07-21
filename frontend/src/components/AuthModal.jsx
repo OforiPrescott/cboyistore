@@ -22,7 +22,7 @@ const GHANA_REGIONS = [
   "Western North",
 ];
 
-export default function AuthModal({ open, onClose }) {
+export default function AuthModal({ open, onClose, onSuccess }) {
   const { login, register } = useAuth();
   const [mode, setMode] = useState("login");
   const [authMethod, setAuthMethod] = useState("email");
@@ -82,6 +82,9 @@ export default function AuthModal({ open, onClose }) {
         });
       }
       onClose();
+      if (typeof onSuccess === "function") {
+        onSuccess();
+      }
     } catch (err) {
       setError(err.message || "Unable to complete request");
     } finally {

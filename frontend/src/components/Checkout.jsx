@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { formatGHS } from "../lib/format.js";
 import { createOrder, verifyPayment } from "../lib/api.js";
 import AuthModal from "./AuthModal.jsx";
+import { useNavigate } from "react-router-dom";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
@@ -22,6 +23,7 @@ export default function Checkout({ onClose }) {
   const [coupon, setCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
+  const navigate = useNavigate();
 
   const subtotal = total;
   const discount = coupon?.discount || 0;
@@ -338,7 +340,7 @@ export default function Checkout({ onClose }) {
           </>
         )}
         {showAuth && (
-          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} onSuccess={() => navigate("/")} />
         )}
       </div>
     </div>
