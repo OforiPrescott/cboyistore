@@ -186,7 +186,12 @@ export async function sendWelcomeEmail(user) {
     console.warn("[email] SMTP not configured; skipping welcome email for %s", user?.email);
     return;
   }
-  await transporter.sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
+  try {
+    await transporter.sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
+  } catch (err) {
+    console.error("[email] welcome email failed for %s: %s", user?.email, err.message);
+    throw err;
+  }
 }
 
 export async function sendOrderConfirmationEmail(order) {
@@ -196,18 +201,31 @@ export async function sendOrderConfirmationEmail(order) {
   }
   const customerEmail = order.customer?.email || order.userEmail;
   if (!customerEmail) return;
-  await transporter.sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
+  try {
+    await transporter.sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
+  } catch (err) {
+    console.error("[email] order confirmation failed for %s on order %s: %s", customerEmail, order?.reference, err.message);
+    throw err;
+  }
 }
 
 export async function sendAdminNotification(customer) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
-  await transporter.sendMail({ from: FROM, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, subject: "New customer registered", html: `
-    <h2>New customer registration</h2>
-    <p><strong>Name:</strong> ${customer.name}</p>
-    <p><strong>Email:</strong> ${customer.email}</p>
-    <p><strong>Phone:</strong> ${customer.phone || "—"}</p>
-    <p><strong>Location:</strong> ${customer.location || "—"}</p>
-  `});
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("[email] SMTP not configured; skipping admin notification for %s", customer?.email);
+    return;
+  }
+  try {
+    await transporter.sendMail({ from: FROM, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, subject: "New customer registered", html: `
+      <h2>New customer registration</h2>
+      <p><strong>Name:</strong> ${customer.name}</p>
+      <p><strong>Email:</strong> ${customer.email}</p>
+      <p><strong>Phone:</strong> ${customer.phone || "—"}</p>
+      <p><strong>Location:</strong> ${customer.location || "—"}</p>
+    `});
+  } catch (err) {
+    console.error("[email] admin notification failed for %s: %s", customer?.email, err.message);
+    throw err;
+  }
 }
 
 export async function sendPasswordResetEmail(user, resetUrl) {
@@ -216,7 +234,12 @@ export async function sendPasswordResetEmail(user, resetUrl) {
     return;
   }
   if (!user.email) return;
-  await transporter.sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
+  try {
+    await transporter.sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
+  } catch (err) {
+    console.error("[email] password reset email failed for %s: %s", user?.email, err.message);
+    throw err;
+  }
 }
 
 export async function sendPasswordChangedEmail(user) {
@@ -225,5 +248,10 @@ export async function sendPasswordChangedEmail(user) {
     return;
   }
   if (!user.email) return;
-  await transporter.sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
+  try {
+    await transporter.sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
+  } catch (err) {
+    console.error("[email] password changed email failed for %s: %s", user?.email, err.message);
+    throw err;
+  }
 }

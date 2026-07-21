@@ -111,7 +111,7 @@ router.post("/", async (req, res, next) => {
     logAudit({ ...actor, action: "order.created", target: order.reference, targetType: "order", details: `Order ${order.reference} created (${formatGHS(order.total)})` }).catch(() => {});
 
     notifyShopBySms(order).catch(() => {});
-    sendOrderConfirmationEmail(order).catch(() => {});
+    sendOrderConfirmationEmail(order).catch((err) => console.error("[email] order confirmation failed:", err.message));
 
     res.status(201).json({ ...order, whatsappLink: buildWhatsappLink(order) });
   } catch (err) {

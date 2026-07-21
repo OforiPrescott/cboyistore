@@ -171,7 +171,7 @@ router.post("/register", rateLimiter(3, 60 * 60 * 1000), async (req, res, next) 
     await database.write();
 
     const token = jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-    sendWelcomeEmail(user).catch(() => {});
+    sendWelcomeEmail(user).catch((err) => console.error("[email] welcome email failed:", err.message));
 
     res.status(201).json({ token, user: sanitizeUser(user) });
   } catch (err) {
