@@ -182,12 +182,18 @@ const templates = {
 };
 
 export async function sendWelcomeEmail(user) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("[email] SMTP not configured; skipping welcome email for %s", user?.email);
+    return;
+  }
   await transporter.sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
 }
 
 export async function sendOrderConfirmationEmail(order) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("[email] SMTP not configured; skipping order confirmation email for order %s", order?.reference);
+    return;
+  }
   const customerEmail = order.customer?.email || order.userEmail;
   if (!customerEmail) return;
   await transporter.sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
@@ -205,13 +211,19 @@ export async function sendAdminNotification(customer) {
 }
 
 export async function sendPasswordResetEmail(user, resetUrl) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("[email] SMTP not configured; skipping password reset email for %s", user?.email);
+    return;
+  }
   if (!user.email) return;
   await transporter.sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
 }
 
 export async function sendPasswordChangedEmail(user) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("[email] SMTP not configured; skipping password changed email for %s", user?.email);
+    return;
+  }
   if (!user.email) return;
   await transporter.sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
 }

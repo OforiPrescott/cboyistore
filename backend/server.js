@@ -23,6 +23,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  console.warn("[email] SMTP not configured. Welcome, order confirmation, and password emails will be skipped.");
+} else {
+  console.info("[email] SMTP configured for %s", process.env.SMTP_USER);
+}
+
 // Uploaded product media (images + short videos) lives here and is served
 // under /api/uploads so it works in dev (proxied by Vite) and in prod.
 const uploadDir = path.resolve(__dirname, "uploads");
