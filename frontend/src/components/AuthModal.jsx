@@ -90,8 +90,8 @@ export default function AuthModal({ open, onClose }) {
 
   function handleSocial(provider) {
     if (provider === "google") {
-      window.open("https://accounts.google.com/signin", "_blank", "noopener,noreferrer");
-      setError("Sign in with Google in the new tab, then confirm your name and region below.");
+      window.open("https://accounts.google.com/signin/chooser", "_blank", "noopener,noreferrer");
+      setError("Sign in with Google in the new tab, choose or add an account, then confirm your name and region below.");
     } else if (provider === "apple") {
       window.open("https://appleid.apple.com/sign-in", "_blank", "noopener,noreferrer");
       setError("Sign in with Apple in the new tab, then confirm your name and region below.");
