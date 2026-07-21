@@ -89,6 +89,15 @@ export default function AuthModal({ open, onClose }) {
     }
   }
 
+  function handleSocial(provider) {
+    if (provider === "apple") {
+      window.open("https://appleid.apple.com/sign-in", "_blank", "noopener,noreferrer");
+      setError("Sign in with Apple in the new tab, then confirm your name and region below.");
+    } else if (provider === "whatsapp") {
+      window.open(`https://wa.me/233541533365?text=${encodeURIComponent("Hi, I'd like to create an account / sign in via WhatsApp.")}`, "_blank");
+    }
+  }
+
   async function handleGoogle() {
     setLoading(true);
     setError("");
