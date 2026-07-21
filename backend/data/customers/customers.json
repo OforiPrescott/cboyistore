@@ -1,3 +1,17 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "l-YvaJc961",
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": null,
+      "passwordHash": "$2b$12$6Wdf1Hp8YoS6W0Ra9Qf5H..Bt85PW2w0TvFdtuR/Lf0iW/zI5re6C",
+      "role": "customer",
+      "location": "Greater Accra",
+      "createdAt": "2026-07-21T12:50:54.524Z",
+      "lastLoginAt": "2026-07-21T12:50:56.047Z",
+      "failedLoginAttempts": 0,
+      "lockedUntil": null
+    }
+  ]
 }
