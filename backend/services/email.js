@@ -66,7 +66,7 @@ const templates = {
       header: `
         <div class="logo">
           <span class="logo-icon">C</span>
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Cboyistore</span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Account created</p>
         <h1>Welcome, ${user.name || "friend"}!</h1>
@@ -110,7 +110,7 @@ const templates = {
       header: `
         <div class="logo">
           <span class="logo-icon">C</span>
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Cboyistore</span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Order confirmed</p>
         <h1>Thanks for your order, ${order.customer?.name || "customer"}!</h1>
@@ -151,7 +151,7 @@ const templates = {
       header: `
         <div class="logo">
           <span class="logo-icon">C</span>
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Cboyistore</span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Password reset</p>
         <h1>Reset your password</h1>
@@ -174,7 +174,7 @@ const templates = {
       header: `
         <div class="logo">
           <span class="logo-icon">C</span>
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px;">Cboyistore</span>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Security notice</p>
         <h1>Password updated</h1>
