@@ -1,16 +1,23 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER || "",
-    pass: process.env.SMTP_PASS || "",
-  },
-});
-
 const FROM = process.env.SMTP_FROM || process.env.SMTP_USER || "Cboyistore <noreplycboyistore@gmail.com>";
+
+let transporter = null;
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER || "",
+        pass: process.env.SMTP_PASS || "",
+      },
+    });
+    console.info("[email] transporter created user=%s pass_set=%s", !!process.env.SMTP_USER, !!process.env.SMTP_PASS);
+  }
+  return transporter;
+}
 
 function wrap(base) {
   return `<!DOCTYPE html>
@@ -187,7 +194,8 @@ export async function sendWelcomeEmail(user) {
     return;
   }
   try {
-    await transporter.sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
+    console.info("[email] welcome email sent to %s", user?.email);
   } catch (err) {
     console.error("[email] welcome email failed for %s: %s", user?.email, err.message);
     throw err;
@@ -202,7 +210,7 @@ export async function sendOrderConfirmationEmail(order) {
   const customerEmail = order.customer?.email || order.userEmail;
   if (!customerEmail) return;
   try {
-    await transporter.sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
+    await getTransporter().sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
   } catch (err) {
     console.error("[email] order confirmation failed for %s on order %s: %s", customerEmail, order?.reference, err.message);
     throw err;
@@ -215,7 +223,7 @@ export async function sendAdminNotification(customer) {
     return;
   }
   try {
-    await transporter.sendMail({ from: FROM, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, subject: "New customer registered", html: `
+    await getTransporter().sendMail({ from: FROM, to: process.env.ADMIN_EMAIL || process.env.SMTP_USER, subject: "New customer registered", html: `
       <h2>New customer registration</h2>
       <p><strong>Name:</strong> ${customer.name}</p>
       <p><strong>Email:</strong> ${customer.email}</p>
@@ -235,7 +243,7 @@ export async function sendPasswordResetEmail(user, resetUrl) {
   }
   if (!user.email) return;
   try {
-    await transporter.sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
   } catch (err) {
     console.error("[email] password reset email failed for %s: %s", user?.email, err.message);
     throw err;
@@ -249,7 +257,7 @@ export async function sendPasswordChangedEmail(user) {
   }
   if (!user.email) return;
   try {
-    await transporter.sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
   } catch (err) {
     console.error("[email] password changed email failed for %s: %s", user?.email, err.message);
     throw err;

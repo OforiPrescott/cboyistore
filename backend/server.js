@@ -8,6 +8,10 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 
+dotenv.config();
+
+console.info("[env] SMTP_USER=%s SMTP_PASS_set=%s", !!process.env.SMTP_USER, !!process.env.SMTP_PASS);
+
 import productsRouter from "./routes/products.js";
 import ordersRouter from "./routes/orders.js";
 import paystackRouter from "./routes/paystack.js";
@@ -16,8 +20,6 @@ import uploadRouter from "./routes/upload.js";
 import authRouter from "./routes/auth.js";
 import adminRouter from "./routes/admin.js";
 import couponsRouter from "./routes/coupons.js";
-
-dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
