@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 const FROM = process.env.SMTP_FROM || process.env.SMTP_USER || "Cboyistore <noreplycboyistore@gmail.com>";
 
@@ -17,6 +19,19 @@ function getTransporter() {
     console.info("[email] transporter created user=%s pass_set=%s", !!process.env.SMTP_USER, !!process.env.SMTP_PASS);
   }
   return transporter;
+}
+
+const LOGO_BASE64_PATH = path.resolve(new URL(import.meta.url).pathname, "..", "..", "..", "public", "logo-base64.txt");
+let logoBase64 = null;
+async function getLogoBase64() {
+  if (!logoBase64) {
+    try {
+      logoBase64 = await readFile(LOGO_BASE64_PATH, "utf-8");
+    } catch {
+      logoBase64 = "";
+    }
+  }
+  return logoBase64;
 }
 
 function wrap(base) {
@@ -60,12 +75,13 @@ function wrap(base) {
 }
 
 const templates = {
-  welcome: (user) =>
-    wrap({
+  welcome: async (user) => {
+    const logo = await getLogoBase64();
+    return wrap({
       title: "Welcome to Cboyistore",
       header: `
         <div class="logo">
-          <span class="logo-icon">C</span>
+          ${logo ? `<img src="${logo}" alt="Cboyistore" style="height:38px; width:auto; border-radius:12px; margin-right:10px;" />` : `<span class="logo-icon">C</span>`}
           <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Account created</p>
@@ -83,7 +99,7 @@ const templates = {
       footer: `Cboyistore &middot; Tafo American Building, Mampong Rd, Kumasi &middot; Open daily 7 AM – 9 PM`,
     }),
 
-  orderConfirmation: (order) => {
+  orderConfirmation: async (order) => {
     const itemsList = order.items
       .map(
         (i) =>
@@ -104,12 +120,12 @@ const templates = {
             <div style="color:#16a34a; font-weight:700;">-GHS ${order.discount.toLocaleString()}</div>
           </div>`
         : "";
-
+    const logo = await getLogoBase64();
     return wrap({
       title: `Order ${order.reference} confirmed`,
       header: `
         <div class="logo">
-          <span class="logo-icon">C</span>
+          ${logo ? `<img src="${logo}" alt="Cboyistore" style="height:38px; width:auto; border-radius:12px; margin-right:10px;" />` : `<span class="logo-icon">C</span>`}
           <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Order confirmed</p>
@@ -145,12 +161,13 @@ const templates = {
     });
   },
 
-  passwordReset: (user, resetUrl) =>
-    wrap({
+  passwordReset: async (user, resetUrl) => {
+    const logo = await getLogoBase64();
+    return wrap({
       title: "Reset your password",
       header: `
         <div class="logo">
-          <span class="logo-icon">C</span>
+          ${logo ? `<img src="${logo}" alt="Cboyistore" style="height:38px; width:auto; border-radius:12px; margin-right:10px;" />` : `<span class="logo-icon">C</span>`}
           <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Password reset</p>
@@ -168,12 +185,13 @@ const templates = {
       footer: `Cboyistore &middot; Tafo American Building, Mampong Rd, Kumasi &middot; Open daily 7 AM – 9 PM`,
     }),
 
-  passwordChanged: (user) =>
-    wrap({
+  passwordChanged: async (user) => {
+    const logo = await getLogoBase64();
+    return wrap({
       title: "Password changed",
       header: `
         <div class="logo">
-          <span class="logo-icon">C</span>
+          ${logo ? `<img src="${logo}" alt="Cboyistore" style="height:38px; width:auto; border-radius:12px; margin-right:10px;" />` : `<span class="logo-icon">C</span>`}
           <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 20px; color: #0b0b12;">Cboyistore</span>
         </div>
         <p class="eyebrow">Security notice</p>
@@ -194,7 +212,8 @@ export async function sendWelcomeEmail(user) {
     return;
   }
   try {
-    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html: templates.welcome(user) });
+    const html = await templates.welcome(user);
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Welcome to Cboyistore", html });
     console.info("[email] welcome email sent to %s", user?.email);
   } catch (err) {
     console.error("[email] welcome email failed for %s: %s", user?.email, err.message);
@@ -210,7 +229,8 @@ export async function sendOrderConfirmationEmail(order) {
   const customerEmail = order.customer?.email || order.userEmail;
   if (!customerEmail) return;
   try {
-    await getTransporter().sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html: templates.orderConfirmation(order) });
+    const html = await templates.orderConfirmation(order);
+    await getTransporter().sendMail({ from: FROM, to: customerEmail, subject: `Order ${order.reference} confirmed`, html });
   } catch (err) {
     console.error("[email] order confirmation failed for %s on order %s: %s", customerEmail, order?.reference, err.message);
     throw err;
@@ -243,7 +263,8 @@ export async function sendPasswordResetEmail(user, resetUrl) {
   }
   if (!user.email) return;
   try {
-    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html: templates.passwordReset(user, resetUrl) });
+    const html = await templates.passwordReset(user, resetUrl);
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Reset your Cboyistore password", html });
   } catch (err) {
     console.error("[email] password reset email failed for %s: %s", user?.email, err.message);
     throw err;
@@ -257,7 +278,8 @@ export async function sendPasswordChangedEmail(user) {
   }
   if (!user.email) return;
   try {
-    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html: templates.passwordChanged(user) });
+    const html = await templates.passwordChanged(user);
+    await getTransporter().sendMail({ from: FROM, to: user.email, subject: "Your Cboyistore password was changed", html });
   } catch (err) {
     console.error("[email] password changed email failed for %s: %s", user?.email, err.message);
     throw err;
