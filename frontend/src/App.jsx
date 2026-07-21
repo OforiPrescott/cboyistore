@@ -19,6 +19,7 @@ import WishlistPage from "./pages/Wishlist.jsx";
 import ProfilePage from "./pages/Profile.jsx";
 import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
 import ResetPasswordPage from "./pages/ResetPassword.jsx";
+import GoogleCallbackPage from "./pages/GoogleCallback.jsx";
 
 function Home() {
   return (
@@ -43,8 +44,9 @@ export default function App() {
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
       </Routes>
       <Footer />
       <CartDrawer />

@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import crypto from "node:crypto";
+import { OAuth2Client } from "google-auth-library";
 import { sendWelcomeEmail, sendPasswordResetEmail, sendPasswordChangedEmail } from "../services/email.js";
 import { logAudit, actorFromReq } from "../services/audit.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
@@ -16,6 +17,12 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret-change-me";
 const JWT_EXPIRES_IN = "7d";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 30 * 60 * 1000;
+
+const googleClient = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_CALLBACK_URL
+);
 
 export function validatePassword(password) {
   if (!password || password.length < 8) {
@@ -267,6 +274,62 @@ router.delete("/customers/:id", async (req, res, next) => {
 
     res.status(204).end();
   } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/auth/google/callback", rateLimiter(5, 60 * 60 * 1000), async (req, res, next) => {
+  try {
+    const { code } = req.body;
+    if (!code) {
+      return res.status(400).json({ error: "Authorization code is required" });
+    }
+
+    const tokens = await googleClient.getToken(code);
+    const ticket = await googleClient.verifyIdToken({
+      idToken: tokens.tokens.id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    const email = payload.email;
+    const name = payload.name;
+    const picture = payload.picture;
+
+    if (!email) {
+      return res.status(400).json({ error: "Google account email is required" });
+    }
+
+    const database = await getDb();
+    let user = database.data.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+      const passwordHash = await bcrypt.hash(nanoid(20), 12);
+      user = {
+        id: nanoid(10),
+        name: name || email.split("@")[0],
+        email: email.toLowerCase(),
+        phone: null,
+        passwordHash,
+        role: "customer",
+        location: null,
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      };
+      database.data.users.push(user);
+      await database.write();
+      sendWelcomeEmail(user).catch(() => {});
+    } else {
+      user.lastLoginAt = new Date().toISOString();
+      await database.write();
+    }
+
+    const token = jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    res.json({ token, user: sanitizeUser(user) });
+  } catch (err) {
+    console.error("Google OAuth error:", err);
     next(err);
   }
 });

@@ -37,8 +37,8 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function login(payload) {
-    const data = await apiLogin(payload);
+  async function login(payload, overrideToken) {
+    const data = overrideToken ? { token: overrideToken, user: payload.user } : await apiLogin(payload);
     setToken(data.token);
     setUser(data.user);
     return data;

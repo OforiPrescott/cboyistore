@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { nanoid } from "nanoid";
 
 const GHANA_REGIONS = [
   "Ahafo",
@@ -88,15 +89,85 @@ export default function AuthModal({ open, onClose }) {
     }
   }
 
-  function handleSocial(provider) {
-    if (provider === "google") {
-      window.open("https://accounts.google.com/signin/chooser", "_blank", "noopener,noreferrer");
-      setError("Sign in with Google in the new tab, choose or add an account, then confirm your name and region below.");
-    } else if (provider === "apple") {
-      window.open("https://appleid.apple.com/sign-in", "_blank", "noopener,noreferrer");
-      setError("Sign in with Apple in the new tab, then confirm your name and region below.");
-    } else if (provider === "whatsapp") {
-      window.open(`https://wa.me/233541533365?text=${encodeURIComponent("Hi, I'd like to create an account / sign in via WhatsApp.")}`, "_blank");
+  async function handleGoogle() {
+    setLoading(true);
+    setError("");
+    try {
+      const clientId = "473305122016-sqpmoorhor5s62fct5r6r58cqcfsas4j.apps.googleusercontent.com";
+      const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+      const scope = "openid profile email";
+      const state = nanoid(10);
+
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope,
+        state,
+        access_type: "offline",
+        prompt: "consent select_account",
+      });
+
+      const width = 500;
+      const height = 600;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
+      const popup = window.open(
+        `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+        "google-oauth",
+        `width=${width},height=${height},left=${left},top=${top}`
+      );
+
+      if (!popup) {
+        setError("Popup blocked. Please allow popups for this site.");
+        setLoading(false);
+        return;
+      }
+
+      const messageHandler = async (event) => {
+        if (event.origin !== window.location.origin) return;
+
+        if (event.data?.type === "google-oauth-success") {
+          window.removeEventListener("message", messageHandler);
+          popup.close();
+
+          const { code } = event.data;
+          const apiBase = import.meta.env?.VITE_API_URL || "http://localhost:4000";
+          const response = await fetch(`${apiBase}/api/auth/google/callback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Google sign-in failed");
+          }
+
+          await login({ email: data.user.email, password: "" }, data.token);
+        } else if (event.data?.type === "google-oauth-error") {
+          window.removeEventListener("message", messageHandler);
+          popup.close();
+          setError(event.data.error || "Google sign-in failed");
+          setLoading(false);
+        }
+      };
+
+      window.addEventListener("message", messageHandler);
+
+      const pollInterval = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(pollInterval);
+          window.removeEventListener("message", messageHandler);
+          if (loading) {
+            setLoading(false);
+          }
+        }
+      }, 500);
+    } catch (err) {
+      setError(err.message || "Google sign-in failed");
+      setLoading(false);
     }
   }
 
@@ -128,7 +199,7 @@ export default function AuthModal({ open, onClose }) {
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
-                onClick={() => handleSocial("google")}
+                onClick={handleGoogle}
                 className="focus-ring flex items-center justify-center gap-2 rounded-xl border border-ink/10 bg-white py-2.5 text-sm font-600 text-ink hover:bg-ink/5"
               >
                 <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
