@@ -113,6 +113,47 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || "Something went wrong" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Cboyistore API running on http://localhost:${PORT}`);
-});
+async function waitForPort(port, timeoutMs = 10000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      await new Promise((resolve, reject) => {
+        const socket = require("net").createConnection(port, "127.0.0.1");
+        socket.once("connect", () => {
+          socket.end();
+          reject(new Error("Port in use"));
+        });
+        socket.once("error", () => resolve());
+      });
+      return true;
+    } catch {
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+  return false;
+}
+
+async function startServer() {
+  const ok = await waitForPort(PORT, 5000);
+  if (!ok) {
+    console.warn(`Port ${PORT} appears busy; waiting to retry...`);
+  }
+
+  return new Promise((resolve, reject) => {
+    const server = app.listen(PORT, () => {
+      console.log(`Cboyistore API running on http://localhost:${PORT}`);
+      resolve(server);
+    });
+
+    server.on("error", async (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.warn(`Port ${PORT} in use, retrying in 1s...`);
+        setTimeout(() => startServer().then(resolve).catch(reject), 1000);
+      } else {
+        reject(err);
+      }
+    });
+  });
+}
+
+await startServer();
