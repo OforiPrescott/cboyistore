@@ -3,33 +3,22 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const GHANA_REGIONS = [
-  "Greater Accra",
+  "Ahafo",
   "Ashanti",
-  "Western",
+  "Bono",
+  "Bono East",
   "Central",
   "Eastern",
+  "Greater Accra",
+  "North East",
   "Northern",
+  "Oti",
+  "Savannah",
   "Upper East",
   "Upper West",
   "Volta",
-  "Brong-Ahafo",
+  "Western",
   "Western North",
-  "Ahafo",
-  "Bono",
-  "Bono East",
-  "Oti",
-  "Savannah",
-];
-
-const INTERNATIONAL_LOCATIONS = [
-  "International - Other",
-  "United States",
-  "United Kingdom",
-  "Canada",
-  "Nigeria",
-  "South Africa",
-  "Kenya",
-  "Other",
 ];
 
 export default function AuthModal({ open, onClose }) {
@@ -58,8 +47,18 @@ export default function AuthModal({ open, onClose }) {
           await login({ phone: form.phone, password: form.password });
         }
       } else {
+        if (!form.name.trim()) {
+          setError("Full name is required");
+          setLoading(false);
+          return;
+        }
+        if (!form.email.trim() && !form.phone.trim()) {
+          setError("Email or phone number is required");
+          setLoading(false);
+          return;
+        }
         if (!form.location) {
-          setError("Please select your location");
+          setError("Please select your region");
           setLoading(false);
           return;
         }
@@ -74,7 +73,7 @@ export default function AuthModal({ open, onClose }) {
           return;
         }
         await register({
-          name: form.name,
+          name: form.name.trim(),
           email: form.email || undefined,
           phone: form.phone || undefined,
           location: form.location,
@@ -92,10 +91,10 @@ export default function AuthModal({ open, onClose }) {
   function handleSocial(provider) {
     if (provider === "google") {
       window.open("https://accounts.google.com/signin", "_blank", "noopener,noreferrer");
-      setError("Sign in with Google in the new tab, then enter your Google email below to complete sign in.");
+      setError("Sign in with Google in the new tab, then confirm your name and region below.");
     } else if (provider === "apple") {
       window.open("https://appleid.apple.com/sign-in", "_blank", "noopener,noreferrer");
-      setError("Sign in with Apple in the new tab, then enter your Apple email below to complete sign in.");
+      setError("Sign in with Apple in the new tab, then confirm your name and region below.");
     } else if (provider === "whatsapp") {
       window.open(`https://wa.me/233541533365?text=${encodeURIComponent("Hi, I'd like to create an account / sign in via WhatsApp.")}`, "_blank");
     }
@@ -118,14 +117,11 @@ export default function AuthModal({ open, onClose }) {
         </div>
 
         {error && error.includes("Sign in with Google") || error.includes("Sign in with Apple") ? (
-          <div className="mb-4 rounded-xl bg-gold/10 p-3 text-sm text-ink/80">
-            {error}
-          </div>
+          <div className="mb-4 rounded-xl bg-gold/10 p-3 text-sm text-ink/80">{error}</div>
         ) : error ? (
           <div className="mb-4 rounded-xl bg-signal/10 p-3 text-sm text-signal">{error}</div>
         ) : null}
 
-        {/* Social login buttons */}
         {mode === "login" && (
           <div className="mb-4">
             <p className="mb-2 text-xs font-600 text-ink/60">Quick sign-in</p>
@@ -176,13 +172,16 @@ export default function AuthModal({ open, onClose }) {
 
         <form onSubmit={submit} className="space-y-3">
           {mode === "register" && (
-            <input
-              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
-              placeholder="Full name"
-              value={form.name}
-              onChange={(e) => set("name", e.target.value)}
-              required
-            />
+            <div>
+              <label className="mb-1 block text-xs font-600 text-ink/60">Full name</label>
+              <input
+                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+                placeholder="Enter your full name"
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                required
+              />
+            </div>
           )}
 
           {/* Auth method toggle */}
@@ -205,42 +204,63 @@ export default function AuthModal({ open, onClose }) {
 
           {authMethod === "email" ? (
             mode === "login" ? (
-              <input
-                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
-                type="email"
-                list="login-email-suggestions"
-                placeholder="Select or enter your email"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-                required
-              />
+              <div>
+                <label className="mb-1 block text-xs font-600 text-ink/60">Email</label>
+                <input
+                  className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+                  type="email"
+                  list="login-email-suggestions"
+                  placeholder="Select or enter your email"
+                  value={form.email}
+                  onChange={(e) => set("email", e.target.value)}
+                  required
+                />
+                <datalist id="login-email-suggestions">
+                  <option value="gmail.com" />
+                  <option value="yahoo.com" />
+                  <option value="outlook.com" />
+                  <option value="hotmail.com" />
+                  <option value="icloud.com" />
+                  <option value="protonmail.com" />
+                  <option value="yahoo.co.uk" />
+                  <option value="live.com" />
+                  <option value="edu.gh" />
+                  <option value="com.gh" />
+                </datalist>
+              </div>
             ) : (
-              <input
-                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
-                type="email"
-                placeholder="Email address"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-                required
-              />
+              <div>
+                <label className="mb-1 block text-xs font-600 text-ink/60">Email address</label>
+                <input
+                  className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={form.email}
+                  onChange={(e) => set("email", e.target.value)}
+                  required
+                />
+              </div>
             )
           ) : (
-            <div className="flex gap-2">
-              <span className="flex items-center rounded-xl border border-ink/10 bg-cream px-3 py-3 text-xs text-ink/60">+233</span>
-              <input
-                className="flex-1 rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
-                type="tel"
-                placeholder="541 533 365"
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value.replace(/[^\d]/g, ""))}
-                required
-              />
+            <div>
+              <label className="mb-1 block text-xs font-600 text-ink/60">Phone number</label>
+              <div className="flex gap-2">
+                <span className="flex items-center rounded-xl border border-ink/10 bg-cream px-3 py-3 text-xs text-ink/60 font-600">+233</span>
+                <input
+                  className="flex-1 rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+                  type="tel"
+                  placeholder="541 533 365"
+                  value={form.phone}
+                  onChange={(e) => set("phone", e.target.value.replace(/[^\d]/g, ""))}
+                  required
+                />
+              </div>
             </div>
           )}
 
           {mode === "register" && (
             <div>
-              <label className="mb-1 block text-xs font-600 text-ink/60">Location</label>
+              <label className="mb-1 block text-xs font-600 text-ink/60">Region</label>
               <select
                 className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
                 value={form.location}
@@ -248,57 +268,44 @@ export default function AuthModal({ open, onClose }) {
                 required
               >
                 <option value="">Select your region</option>
-                <optgroup label="Ghana Regions">
-                  {GHANA_REGIONS.map((region) => (
-                    <option key={region} value={region}>{region}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="International">
-                  {INTERNATIONAL_LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>{loc}</option>
-                  ))}
-                </optgroup>
+                {GHANA_REGIONS.map((region) => (
+                  <option key={region} value={region}>{region}</option>
+                ))}
               </select>
             </div>
           )}
 
-          <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => set("password", e.target.value)}
-            required
-            minLength={8}
-          />
-          {mode === "register" && (
+          <div>
+            <label className="mb-1 block text-xs font-600 text-ink/60">Password</label>
             <input
               className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
               type="password"
-              placeholder="Confirm password"
-              value={form.confirmPassword}
-              onChange={(e) => set("confirmPassword", e.target.value)}
+              placeholder="Enter your password"
+              value={form.password}
+              onChange={(e) => set("password", e.target.value)}
               required
               minLength={8}
             />
+          </div>
+          {mode === "register" && (
+            <div>
+              <label className="mb-1 block text-xs font-600 text-ink/60">Confirm password</label>
+              <input
+                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+                type="password"
+                placeholder="Confirm your password"
+                value={form.confirmPassword}
+                onChange={(e) => set("confirmPassword", e.target.value)}
+                required
+                minLength={8}
+              />
+            </div>
           )}
           {mode === "login" && (
             <p className="text-right">
               <Link to="/forgot-password" onClick={onClose} className="text-xs font-600 text-signal hover:underline">Forgot password?</Link>
             </p>
           )}
-          <datalist id="login-email-suggestions">
-            <option value="gmail.com" />
-            <option value="yahoo.com" />
-            <option value="outlook.com" />
-            <option value="hotmail.com" />
-            <option value="icloud.com" />
-            <option value="protonmail.com" />
-            <option value="yahoo.co.uk" />
-            <option value="live.com" />
-            <option value="edu.gh" />
-            <option value="com.gh" />
-          </datalist>
           <button
             type="submit"
             disabled={loading}
