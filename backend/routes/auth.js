@@ -18,6 +18,28 @@ const JWT_EXPIRES_IN = "7d";
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 30 * 60 * 1000;
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const file = path.join(__dirname, "..", "data", "customers", "customers.json");
+const adapter = new JSONFile(file);
+const db = new Low(adapter, { users: [] });
+
+async function getDb() {
+  await db.read();
+  db.data ||= { users: [] };
+  return db;
+}
+
+const passwordResetTokens = new Map();
+
+function cleanExpiredTokens() {
+  const now = Date.now();
+  for (const [token, data] of passwordResetTokens.entries()) {
+    if (new Date(data.expiresAt).getTime() < now) {
+      passwordResetTokens.delete(token);
+    }
+  }
+}
+
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
