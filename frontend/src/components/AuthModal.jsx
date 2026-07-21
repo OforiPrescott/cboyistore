@@ -6,7 +6,7 @@ export default function AuthModal({ open, onClose }) {
   const { login, register } = useAuth();
   const [mode, setMode] = useState("login");
   const [authMethod, setAuthMethod] = useState("email"); // email | phone
-  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +28,16 @@ export default function AuthModal({ open, onClose }) {
           await login({ phone: form.phone, password: form.password });
         }
       } else {
+        if (form.password !== form.confirmPassword) {
+          setError("Passwords do not match");
+          setLoading(false);
+          return;
+        }
+        if (form.password.length < 8) {
+          setError("Password must be at least 8 characters");
+          setLoading(false);
+          return;
+        }
         await register({
           name: form.name,
           email: form.email || undefined,
@@ -188,6 +198,17 @@ export default function AuthModal({ open, onClose }) {
             required
             minLength={8}
           />
+          {mode === "register" && (
+            <input
+              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm focus-ring"
+              type="password"
+              placeholder="Confirm password"
+              value={form.confirmPassword}
+              onChange={(e) => set("confirmPassword", e.target.value)}
+              required
+              minLength={8}
+            />
+          )}
           {mode === "login" && (
             <p className="text-right">
               <Link to="/forgot-password" onClick={onClose} className="text-xs font-600 text-signal hover:underline">Forgot password?</Link>
